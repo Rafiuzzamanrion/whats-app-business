@@ -2,7 +2,11 @@ import React from "react";
 
 const Pricing = () => {
   return (
-    <div className={'grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10 p-6 mt-32'}>
+    <div
+      className={
+        "grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10 p-6 mt-32"
+      }
+    >
       <div className="max-w-sm mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
         <div className="p-8">
           <h3 className="text-2xl font-extrabold text-gray-900 mb-2 text-center">

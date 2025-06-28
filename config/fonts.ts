@@ -1,4 +1,9 @@
-import {Fira_Code as FontMono, Inter as FontSans, Lato} from "next/font/google";
+import {
+  Fira_Code as FontMono,
+  Geologica,
+  Inter as FontSans,
+  Lato
+} from "next/font/google";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -13,8 +18,7 @@ export const MonoSans = FontMono({
   subsets: ["latin"],
   variable: "--font-mono-sans",
 });
-export const fontLato = Lato({
+export const fontGeologica = Geologica({
   subsets: ["latin"],
-  variable: "--font-lato",
-  weight: ["100", "300", "400", "700", "900"],
+  variable: "--font-geologica",
 });

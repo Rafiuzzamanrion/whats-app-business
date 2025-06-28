@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
+import {fontGeologica, fontSans} from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
@@ -33,12 +33,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body
-        className={clsx(
-          "min-h-screen text-foreground font-sans bg-background antialiased",
-          fontSans.variable,
-        )}
-      >
+    <body
+      className={clsx(
+        "min-h-screen text-foreground font-geologica bg-background antialiased",
+        fontGeologica.variable,
+      )}
+    >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col h-screen w-full">
             <Navbar />
