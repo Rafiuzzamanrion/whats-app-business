@@ -1,12 +1,11 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
-import {fontLato, fontMono, fontSans, MonoSans} from "@/config/fonts";
+import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
@@ -33,8 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="en">
-      <head />
+    <html lang="en" suppressHydrationWarning={true}>
       <body
         className={clsx(
           "min-h-screen text-foreground font-sans bg-background antialiased",
@@ -42,22 +40,14 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
+          <div className="relative flex flex-col h-screen w-full">
             <Navbar />
-            <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
+            <main
+              className="container mx-auto min-w-full px-6"
+              suppressHydrationWarning={true}
+            >
               {children}
             </main>
-            <footer className="w-full flex items-center justify-center py-3">
-              <Link
-                isExternal
-                className="flex items-center gap-1 text-current"
-                href="https://heroui.com?utm_source=next-app-template"
-                title="heroui.com homepage"
-              >
-                <span className="text-default-600">Powered by</span>
-                <p className="text-primary">HeroUI</p>
-              </Link>
-            </footer>
           </div>
         </Providers>
       </body>

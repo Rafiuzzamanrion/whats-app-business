@@ -21,8 +21,8 @@ export const siteConfig = {
       href: "/partners",
     },
     {
-      label: "Resources",
-      href: "/resources",
+      label: "Reviews",
+      href: "/reviews",
     },
   ],
   navMenuItems: [
@@ -43,8 +43,8 @@ export const siteConfig = {
       href: "/partners",
     },
     {
-      label: "Resources",
-      href: "/resources",
+      label: "Reviews",
+      href: "/reviews",
     },
   ],
   links: {

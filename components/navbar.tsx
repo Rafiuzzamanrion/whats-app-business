@@ -1,3 +1,4 @@
+"use client";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -7,47 +8,19 @@ import {
   NavbarItem,
   NavbarMenuItem,
 } from "@heroui/navbar";
-import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
-import { Input } from "@heroui/input";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
-  Logo,
-} from "@/components/icons";
 
 export const Navbar = () => {
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
-  );
+  const pathName = usePathname();
+  const isActive = (href: string) => pathName === href;
 
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
@@ -55,21 +28,22 @@ export const Navbar = () => {
         <NavbarBrand as="li" className="gap-10 max-w-fit mr-5">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Image
+              alt="Picture of the author"
+              height={30}
               src="/whatsapp.png"
               width={30}
-              height={30}
-              alt="Picture of the author"
             />
             <p className="font-bold text-inherit">WAPI Cloud</p>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-6 justify-start ml-2">
+        <ul className="hidden md:flex gap-6 justify-start ml-2">
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                  `${isActive(item.href) && "text-success font-bold transition-colors"}` +
+                    "hover:text-success",
                 )}
                 color="foreground"
                 href={item.href}
@@ -88,7 +62,6 @@ export const Navbar = () => {
         <NavbarItem className="hidden sm:flex gap-2">
           <ThemeSwitch />
         </NavbarItem>
-
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
