@@ -17,13 +17,13 @@ const BottomBanner = () => {
       <div>
         <h1
           className={
-            "lg:text-5xl md:text-4xl text-3xl font-semibold mb-10" +
+            "lg:text-4xl md:text-3xl text-3xl font-semibold mb-10" +
             " text-success"
           }
         >
           Your Trusted Solution for Secure & Smart WhatsApp Business Messaging
         </h1>
-        <p className={"text-justify text-lg tracking-wide leading-10"}>
+        <p className={"text-justify text-lg tracking-wide leading-9"}>
           Today, WhatsApp Business Messaging is the most effective way to build
           direct, fast and branded communication with customers. But
           unfortunately, many people are getting trapped in fake services, scams
