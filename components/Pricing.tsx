@@ -45,6 +45,7 @@ const Pricing = () => {
         "Full campaign management",
         "Scheduling + branded panel",
         "Live reporting & support",
+        "24/7 Support",
       ],
       pricing: {
         setup: "$50",
@@ -100,10 +101,10 @@ const Pricing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-200 to-green-200 py-20 my-28 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-green-100 py-24 my-32 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-success uppercase mb-7">
             WhatsApp Messaging Services
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -112,11 +113,12 @@ const Pricing = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
           {packages.map((pkg, index) => (
             <div
               key={index}
-              className={`relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 ${pkg.borderColor} overflow-hidden group`}
+              className={`relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 ${pkg.borderColor} overflow-hidden group flex flex-col`}
+              style={{ minHeight: "780px" }}
             >
               {/* Popular Badge */}
               {pkg.popular && (
@@ -151,73 +153,78 @@ const Pricing = () => {
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                {/* Features */}
-                <div className="mb-6">
-                  <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-green-500" />
-                    Features Included
-                  </h4>
-                  <ul className="space-y-3">
-                    {pkg.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-3">
-                        <div className="bg-green-100 p-1 rounded-full mt-0.5">
-                          <Check className="w-3 h-3 text-green-600" />
-                        </div>
-                        <span className="text-gray-700 text-sm leading-relaxed">
-                          {feature}
+              <div className="p-6 flex-grow flex flex-col justify-between">
+                <div className="space-y-6">
+                  {/* Features */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-green-500" />
+                      Features Included
+                    </h4>
+                    <ul className="space-y-3">
+                      {pkg.features.map((feature, featureIndex) => (
+                        <li
+                          key={featureIndex}
+                          className="flex items-start gap-3"
+                        >
+                          <div className="bg-green-100 p-1 rounded-full mt-0.5">
+                            <Check className="w-3 h-3 text-green-600" />
+                          </div>
+                          <span className="text-gray-700 text-sm leading-relaxed">
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Pricing */}
+                  <div className="p-4 bg-gray-50 rounded-xl">
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      💲 Pricing:
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600 text-sm">
+                          🔧 API Setup:
                         </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Pricing */}
-                <div className="mb-6 p-4 bg-gray-50 rounded-xl">
-                  <h4 className="font-semibold text-gray-900 mb-3">
-                    💲 Pricing:
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600 text-sm">
-                        🔧 API Setup:
-                      </span>
-                      <span className="font-bold text-gray-900">
-                        {pkg.pricing.setup}
-                      </span>
+                        <span className="font-bold text-gray-900">
+                          {pkg.pricing.setup}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-gray-900">
+                          {pkg.pricing.messaging}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <span className="font-bold text-gray-900">
-                        {pkg.pricing.messaging}
-                      </span>
+                    <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                      <p className="text-xs text-yellow-800">
+                        ⚠️ {pkg.pricing.note}
+                      </p>
                     </div>
                   </div>
-                  <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <p className="text-xs text-yellow-800">
-                      ⚠️ {pkg.pricing.note}
-                    </p>
+
+                  {/* Badge */}
+                  <div>
+                    <div
+                      className={`bg-gradient-to-r ${pkg.bgGradient} p-3 rounded-lg border ${pkg.borderColor}`}
+                    >
+                      <p className="text-sm font-medium text-gray-800">
+                        🎯 {pkg.badge}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Badge */}
-                <div className="mb-6">
-                  <div
-                    className={`bg-gradient-to-r ${pkg.bgGradient} p-3 rounded-lg border ${pkg.borderColor}`}
+                {/* CTA Button - Always at bottom */}
+                <div className="mt-6">
+                  <button
+                    className={`w-full bg-gradient-to-r ${pkg.gradient} text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 group-hover:shadow-xl`}
                   >
-                    <p className="text-sm font-medium text-gray-800">
-                      🎯 {pkg.badge}
-                    </p>
-                  </div>
+                    Get Started
+                  </button>
                 </div>
-
-                {/* CTA Button */}
-               <div className={'justify-center items-end h-full'}>
-                 <button
-                   className={`w-full bg-gradient-to-r ${pkg.gradient} text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 group-hover:shadow-xl`}
-                 >
-                   Get Started
-                 </button>
-               </div>
               </div>
 
               {/* Decorative elements */}
