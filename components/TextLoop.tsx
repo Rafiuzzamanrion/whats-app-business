@@ -10,7 +10,7 @@ export default function TextLoop() {
   useEffect(() => {
     const timeout = setTimeout(
       () => setIndex((i) => (i + 1) % texts.length),
-      2000,
+      3000,
     );
 
     return () => clearTimeout(timeout);
