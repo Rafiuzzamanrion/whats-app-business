@@ -5,9 +5,10 @@ import clsx from "clsx";
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
-import {fontGeologica, fontSans} from "@/config/fonts";
+import { fontGeologica } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import Footer from "@/components/Footer";
+import AuthProvider from "@/components/nextAuthProviders";
 
 export const metadata: Metadata = {
   title: {
@@ -34,24 +35,26 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-    <body
-      className={clsx(
-        "min-h-screen text-foreground font-geologica bg-background antialiased",
-        fontGeologica.variable,
-      )}
-    >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen w-full">
-            <Navbar />
-            <main
-              className="container mx-auto min-w-full px-6"
-              suppressHydrationWarning={true}
-            >
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </Providers>
+      <body
+        className={clsx(
+          "min-h-screen text-foreground font-geologica bg-background antialiased",
+          fontGeologica.variable,
+        )}
+      >
+        <AuthProvider>
+          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+            <div className="relative flex flex-col h-screen w-full">
+              <Navbar />
+              <main
+                className="container mx-auto min-w-full px-6"
+                suppressHydrationWarning={true}
+              >
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </Providers>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
+import {Button} from "@heroui/button";
 
 export const Navbar = () => {
   const pathName = usePathname();
@@ -60,12 +61,38 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
+          <Button className={'mr-1'} size={"sm"} color={"success"} variant={"shadow"} >
+            <NextLink
+              className="flex items-center gap-1"
+              href="/auth/signin"
+            >
+              Login
+            </NextLink>
+          </Button>
+          <Button color={"primary"} size={"sm"} variant={"shadow"} >
+            <NextLink
+              className="flex items-center gap-1"
+              href="/auth/signin"
+            >
+              Get Started
+            </NextLink>
+          </Button>
           <ThemeSwitch />
         </NavbarItem>
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <ThemeSwitch />
+        <Button color={"success"} size={"sm"} variant={"shadow"}
+
+        >
+          <NextLink
+            className="flex items-center gap-1"
+            href="/login"
+          >
+            Login
+          </NextLink>
+        </Button>
         <NavbarMenuToggle />
       </NavbarContent>
 
