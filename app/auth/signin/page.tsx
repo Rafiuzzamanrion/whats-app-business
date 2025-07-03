@@ -30,11 +30,11 @@ export default function SignIn() {
         const session = await getSession();
 
         if (session?.user?.role === "SUPER_ADMIN") {
-          router.push("/super-admin");
+          router.push("/admin");
         } else if (session?.user?.role === "ADMIN") {
           router.push("/admin");
         } else {
-          router.push("/dashboard");
+          router.push("/admin");
         }
       }
     } catch (error) {
@@ -45,11 +45,11 @@ export default function SignIn() {
   };
 
   const handleGoogleSignIn = async () => {
-    await signIn("google", { callbackUrl: "/dashboard" });
+    await signIn("google", { callbackUrl: "/admin" });
   };
 
   const handleGitHubSignIn = async () => {
-    await signIn("github", { callbackUrl: "/dashboard" });
+    await signIn("github", { callbackUrl: "/admin" });
   };
 
   return (

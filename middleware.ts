@@ -25,7 +25,7 @@ export default withAuth(
     }
 
     // Protected routes
-    if (pathname.startsWith("/dashboard")) {
+    if (pathname.startsWith("/admin")) {
       if (!token) {
         return NextResponse.redirect(new URL("/auth/signin", req.url));
       }
@@ -42,7 +42,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
     "/admin/:path*",
     "/super-admin/:path*",
     "/api/admin/:path*",
