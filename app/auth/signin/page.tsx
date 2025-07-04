@@ -5,7 +5,8 @@ import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@heroui/button";
-import {Input} from "@heroui/input";
+import { Input } from "@heroui/input";
+import { Spinner } from "@heroui/spinner";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -104,7 +105,8 @@ export default function SignIn() {
               type="submit"
               variant={"shadow"}
             >
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading && <Spinner color="primary" size={"sm"} />}{" "}
+              {isLoading ? "Signing" + " in..." : "Sign in"}
             </Button>
           </div>
 
