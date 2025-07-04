@@ -51,15 +51,11 @@ export default function SignIn() {
     await signIn("google", { callbackUrl: "/admin" });
   };
 
-  const handleGitHubSignIn = async () => {
-    await signIn("github", { callbackUrl: "/admin" });
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-slate-800 p-8 rounded-lg shadow-lg">
         <div>
-          <h2 className="my-7 uppercase text-center text-3xl font-extrabold ">
+          <h2 className="my-7 uppercase text-center text-3xl font-extrabold text-white">
             Sign in to your account
           </h2>
         </div>

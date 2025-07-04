@@ -14,14 +14,18 @@ import NextLink from "next/link";
 import clsx from "clsx";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Button } from "@heroui/button";
+import { signOut } from "next-auth/react";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {Button} from "@heroui/button";
+import { useAuth } from "@/app/hooks/use-auth";
 
 export const Navbar = () => {
   const pathName = usePathname();
   const isActive = (href: string) => pathName === href;
+
+  const { user } = useAuth();
 
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
@@ -61,19 +65,24 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          <Button className={'mr-1'} size={"sm"} color={"success"} variant={"shadow"} >
-            <NextLink
-              className="flex items-center gap-1"
-              href="/auth/signin"
+          {user? (
+            <Button color={"success"} size={"sm"} variant={"shadow"}>
+              <NextLink className="flex items-center gap-1" href="/login">
+                Login
+              </NextLink>
+            </Button>
+          ) : (
+            <Button
+              color={"danger"}
+              size={"sm"}
+              variant={"shadow"}
+              onPress={() => signOut()}
             >
-              Login
-            </NextLink>
-          </Button>
-          <Button color={"primary"} size={"sm"} variant={"shadow"} >
-            <NextLink
-              className="flex items-center gap-1"
-              href="/auth/signin"
-            >
+              log out
+            </Button>
+          )}
+          <Button color={"primary"} size={"sm"} variant={"shadow"}>
+            <NextLink className="flex items-center gap-1" href="/auth/signin">
               Get Started
             </NextLink>
           </Button>
@@ -83,16 +92,22 @@ export const Navbar = () => {
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <ThemeSwitch />
-        <Button color={"success"} size={"sm"} variant={"shadow"}
-
-        >
-          <NextLink
-            className="flex items-center gap-1"
-            href="/login"
+        {user ? (
+          <Button color={"success"} size={"sm"} variant={"shadow"}>
+            <NextLink className="flex items-center gap-1" href="/login">
+              Login
+            </NextLink>
+          </Button>
+        ) : (
+          <Button
+            color={"danger"}
+            size={"sm"}
+            variant={"shadow"}
+            onPress={() => signOut()}
           >
-            Login
-          </NextLink>
-        </Button>
+            log out
+          </Button>
+        )}
         <NavbarMenuToggle />
       </NavbarContent>
 

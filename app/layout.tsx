@@ -40,10 +40,14 @@ export default function RootLayout({
           "min-h-screen text-foreground font-geologica bg-background antialiased",
           fontGeologica.variable,
         )}
+        suppressHydrationWarning={true}
       >
         <AuthProvider>
           <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-            <div className="relative flex flex-col h-screen w-full">
+            <div
+              className="relative flex flex-col h-screen w-full"
+              suppressHydrationWarning={true}
+            >
               <Navbar />
               <main
                 className="container mx-auto min-w-full px-6"
