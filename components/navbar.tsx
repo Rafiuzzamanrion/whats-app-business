@@ -65,7 +65,7 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          {user? (
+          {!user? (
             <Button color={"success"} size={"sm"} variant={"shadow"}>
               <NextLink className="flex items-center gap-1" href="/login">
                 Login
@@ -92,7 +92,7 @@ export const Navbar = () => {
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <ThemeSwitch />
-        {user ? (
+        {!user ? (
           <Button color={"success"} size={"sm"} variant={"shadow"}>
             <NextLink className="flex items-center gap-1" href="/login">
               Login
