@@ -25,12 +25,6 @@ export default withAuth(
       }
     }
 
-    // Protected routes
-    if (pathname.startsWith("/dashboard")) {
-      if (!token) {
-        return NextResponse.redirect(new URL("/auth/signin", req.url));
-      }
-    }
 
     return NextResponse.next();
   },
