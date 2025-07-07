@@ -6,7 +6,8 @@ import { Role } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(req: NextRequest) {
+// GET - Fetch all users
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -21,19 +22,17 @@ export async function GET(req: NextRequest) {
     const users = await prisma.user.findMany({
       select: {
         id: true,
-        name: true,
         email: true,
+        name: true,
         role: true,
         createdAt: true,
-      },
-      orderBy: {
-        createdAt: "desc",
+        updatedAt: true,
       },
     });
 
-    return NextResponse.json({ users });
+    return NextResponse.json(users);
   } catch (error) {
-    console.error("Admin users fetch error:", error);
+    console.error("Error fetching users:", error);
 
     return NextResponse.json(
       { error: "Internal server error" },
@@ -42,11 +41,8 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// app/api/admin/users/[id]/route.ts
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+// POST - Create a new user
+export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -58,104 +54,27 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { role } = await req.json();
-    const userId = params.id;
+    const body = await request.json();
+    const { email, name, role } = body;
 
-    // Prevent non-super-admins from creating super admins
-    if (role === Role.SUPER_ADMIN && session.user.role !== Role.SUPER_ADMIN) {
+    if (!email || !name || !role) {
       return NextResponse.json(
-        { error: "Insufficient permissions" },
-        { status: 403 },
-      );
-    }
-
-    // Prevent modifying super admin roles by non-super-admins
-    const targetUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true },
-    });
-
-    if (
-      targetUser?.role === Role.SUPER_ADMIN &&
-      session.user.role !== Role.SUPER_ADMIN
-    ) {
-      return NextResponse.json(
-        { error: "Cannot modify super admin" },
-        { status: 403 },
-      );
-    }
-
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: { role },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-      },
-    });
-
-    return NextResponse.json({ user: updatedUser });
-  } catch (error) {
-    console.error("User update error:", error);
-
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
-  }
-}
-
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
-  try {
-    const session = await getServerSession(authOptions);
-
-    if (
-      !session ||
-      (session.user.role !== Role.ADMIN &&
-        session.user.role !== Role.SUPER_ADMIN)
-    ) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const userId = params.id;
-
-    // Prevent self-deletion
-    if (userId === session.user.id) {
-      return NextResponse.json(
-        { error: "Cannot delete yourself" },
+        { error: "Missing required fields" },
         { status: 400 },
       );
     }
 
-    // Prevent non-super-admins from deleting super admins
-    const targetUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true },
+    const user = await prisma.user.create({
+      data: {
+        email,
+        name,
+        role,
+      },
     });
 
-    if (
-      targetUser?.role === Role.SUPER_ADMIN &&
-      session.user.role !== Role.SUPER_ADMIN
-    ) {
-      return NextResponse.json(
-        { error: "Cannot delete super admin" },
-        { status: 403 },
-      );
-    }
-
-    await prisma.user.delete({
-      where: { id: userId },
-    });
-
-    return NextResponse.json({ message: "User deleted successfully" });
+    return NextResponse.json(user, { status: 201 });
   } catch (error) {
-    console.error("User deletion error:", error);
+    console.error("Error creating user:", error);
 
     return NextResponse.json(
       { error: "Internal server error" },
@@ -163,3 +82,6 @@ export async function DELETE(
     );
   }
 }
+
+// If you need to update users, create a separate file:
+// app/api/admin/users/[id]/route.ts

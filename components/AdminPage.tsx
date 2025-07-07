@@ -28,11 +28,9 @@ export default function AdminPanel() {
   const fetchUsers = async () => {
     try {
       const response = await fetch("/api/admin/users");
-
       if (response.ok) {
         const data = await response.json();
-
-        setUsers(data.users);
+        setUsers(data);
       } else {
         setError("Failed to fetch users");
       }
@@ -42,7 +40,7 @@ export default function AdminPanel() {
       setIsLoading(false);
     }
   };
-
+  console.log('users', users);
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
@@ -158,7 +156,7 @@ export default function AdminPanel() {
                       </tr>
                     </thead>
                     <tbody className=" divide-y divide-gray-200">
-                      {users.map((user) => (
+                      {users?.map((user) => (
                         <tr key={user.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div>
