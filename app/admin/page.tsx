@@ -29,7 +29,7 @@ export default function Dashboard() {
               {isSuperAdmin && (
                 <Link
                   className="text-purple-600 hover:text-purple-500 font-medium"
-                  href="/super-admin"
+                  href="/admin/superAdminPanel"
                 >
                   Super Admin Panel
                 </Link>
@@ -37,7 +37,7 @@ export default function Dashboard() {
               {isAdmin && (
                 <Link
                   className="text-blue-600 hover:text-blue-500 font-medium"
-                  href="/admin"
+                  href="/admin/adminPanel"
                 >
                   Admin Panel
                 </Link>

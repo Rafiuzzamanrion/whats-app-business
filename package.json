@@ -26,6 +26,7 @@
     "@prisma/client": "^6.11.0",
     "@react-aria/ssr": "3.9.9",
     "@react-aria/visually-hidden": "3.8.24",
+    "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "clsx": "2.1.1",
     "framer-motion": "11.13.1",
