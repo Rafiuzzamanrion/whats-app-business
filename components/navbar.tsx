@@ -57,6 +57,19 @@ export const Navbar = () => {
               </NextLink>
             </NavbarItem>
           ))}
+          <NavbarItem>
+            <NextLink
+              className={clsx(
+                linkStyles({ color: "foreground" }),
+                `${isActive("/admin") && "text-success font-bold transition-colors"}` +
+                  "hover:text-success",
+              )}
+              color="primary"
+              href="/admin"
+            >
+              Admin
+            </NextLink>
+          </NavbarItem>
         </ul>
       </NavbarContent>
 

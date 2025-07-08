@@ -1,9 +1,25 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@heroui/table";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/dropdown";
+import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
+import { Chip } from "@heroui/chip";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
 
 import { useRequireAdmin } from "@/app/hooks/use-auth";
 
@@ -16,7 +32,7 @@ interface User {
 }
 
 export default function AdminPanel() {
-  const { user, isSuperAdmin } = useRequireAdmin();
+  const { user, isSuperAdmin, isAdmin } = useRequireAdmin();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -28,8 +44,10 @@ export default function AdminPanel() {
   const fetchUsers = async () => {
     try {
       const response = await fetch("/api/admin/users");
+
       if (response.ok) {
         const data = await response.json();
+
         setUsers(data);
       } else {
         setError("Failed to fetch users");
@@ -40,7 +58,7 @@ export default function AdminPanel() {
       setIsLoading(false);
     }
   };
-  console.log('users', users);
+
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
@@ -52,7 +70,7 @@ export default function AdminPanel() {
       });
 
       if (response.ok) {
-        fetchUsers(); // Refresh the user list
+        fetchUsers();
       } else {
         setError("Failed to update user role");
       }
@@ -70,7 +88,7 @@ export default function AdminPanel() {
       });
 
       if (response.ok) {
-        fetchUsers(); // Refresh the user list
+        fetchUsers();
       } else {
         setError("Failed to delete user");
       }
@@ -79,132 +97,136 @@ export default function AdminPanel() {
     }
   };
 
+  const roleColorMap: Record<
+    string,
+    "success" | "danger" | "warning" | "default" | "primary"
+  > = {
+    SUPER_ADMIN: "primary",
+    ADMIN: "warning",
+    USER: "success",
+  };
+
   return (
     <div className="min-h-screen">
-      <nav className="shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-semibold text-blue-600">
-                Admin Panel
-              </h1>
+      <Navbar className={'w-full'} isBordered>
+        <NavbarBrand>
+          <h1 className="text-xl font-semibold text-primary">Admin Panel</h1>
+        </NavbarBrand>
+        <NavbarContent justify="end">
+          {(isSuperAdmin || isAdmin) && (
+            <NavbarItem>
               <Link
-                className="text-gray-600 hover:text-gray-900"
-                href="/admin"
+                className="text-purple-600 hover:text-purple-500 font-medium"
+                href="/admin/adminPanel"
               >
-                Dashboard
+                Admin Panel
               </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              {isSuperAdmin && (
-                <Link
-                  className="text-purple-600 hover:text-purple-500 font-medium"
-                  href="/super-admin"
-                >
-                  Super Admin Panel
-                </Link>
-              )}
-              <span className="text-sm text-gray-500">
-                {user?.name || user?.email} ({user?.role})
-              </span>
-              <button
-                className="text-red-600 hover:text-red-500 font-medium"
-                onClick={() => signOut()}
-              >
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+            </NavbarItem>
+          )}
+          <NavbarItem>
+            <span className="text-sm text-foreground-500">
+              {user?.name || user?.email} ({user?.role})
+            </span>
+          </NavbarItem>
+        </NavbarContent>
+      </Navbar>
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="shadow rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h2 className="text-2xl font-bold  mb-6">
-                User Management
-              </h2>
+        <div className="p-4">
+          <h2 className="text-2xl font-bold mb-6">
+            Welcome, {user?.name || user?.email}!
+          </h2>
 
-              {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                  {error}
-                </div>
-              )}
-
-              {isLoading ? (
-                <div className="text-center py-8">
-                  <div className="text-lg">Loading users...</div>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          User
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Role
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Joined
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className=" divide-y divide-gray-200">
-                      {users?.map((user) => (
-                        <tr key={user.id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">
-                                {user.name || "No name"}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {user.email}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <select
-                              className="text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                              disabled={user.role === "SUPER_ADMIN"}
-                              value={user.role}
-                              onChange={(e) =>
-                                updateUserRole(user.id, e.target.value)
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <Spinner color="primary" label="Loading users..." size={"lg"} />
+            </div>
+          ) : error ? (
+            <div className="text-danger">{error}</div>
+          ) : (
+            <Table aria-label="Users table" className="mt-4">
+              <TableHeader>
+                <TableColumn>ID</TableColumn>
+                <TableColumn>NAME</TableColumn>
+                <TableColumn>EMAIL</TableColumn>
+                <TableColumn>ROLE</TableColumn>
+                <TableColumn>ACTIONS</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {users.map((userItem, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{userItem.id}</TableCell>
+                    <TableCell>
+                      {user?.id === userItem?.id ? (
+                        <Chip variant={"flat"} color={"success"}>{userItem.name || "N/A"}</Chip>
+                      ) : (
+                        userItem.name || "N/A"
+                      )}
+                    </TableCell>
+                    <TableCell>{userItem.email}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Chip
+                          color={roleColorMap[userItem.role] || "default"}
+                          variant="flat"
+                        >
+                          {userItem.role}
+                        </Chip>
+                        {isSuperAdmin && (
+                          <Dropdown>
+                            <DropdownTrigger>
+                              <Button
+                                className="min-w-0 px-2"
+                                size="sm"
+                                variant="light"
+                              >
+                                <svg
+                                  fill="none"
+                                  height="16"
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  viewBox="0 0 24 24"
+                                  width="16"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path d="m6 9 6 6 6-6" />
+                                </svg>
+                              </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                              aria-label="User role actions"
+                              onAction={(key) =>
+                                updateUserRole(userItem.id, key.toString())
                               }
                             >
-                              <option value="USER">User</option>
-                              <option value="ADMIN">Admin</option>
-                              {isSuperAdmin && (
-                                <option value="SUPER_ADMIN">Super Admin</option>
-                              )}
-                            </select>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {new Date(user.createdAt).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            {user.role !== "SUPER_ADMIN" && (
-                              <button
-                                className="text-red-600 hover:text-red-900"
-                                onClick={() => deleteUser(user.id)}
-                              >
-                                Delete
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
+                              <DropdownItem key="USER">User</DropdownItem>
+                              <DropdownItem key="ADMIN">Admin</DropdownItem>
+                              <DropdownItem key="SUPER_ADMIN">
+                                Super Admin
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </Dropdown>
+                        )}
+                      </div>
+                    </TableCell>
+
+                    <TableCell>
+                      <Button
+                        color="danger"
+                        size="sm"
+                        variant="bordered"
+                        onPress={() => deleteUser(userItem.id)}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </main>
     </div>
