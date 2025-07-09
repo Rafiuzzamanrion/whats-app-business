@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Spinner } from "@heroui/spinner";
+import {addToast} from "@heroui/react";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -34,10 +35,22 @@ export default function SignIn() {
 
         if (session?.user?.role === "SUPER_ADMIN") {
           router.push("/admin");
+          addToast({
+            title: "Success",
+            description: "Logged in successfully",
+            color: "success",
+            timeout: 2000,
+          })
         } else if (session?.user?.role === "ADMIN") {
           router.push("/admin");
         } else {
-          router.push("/admin");
+          addToast({
+            title: "Unauthorized",
+            description: "You are not authorized to access this page.",
+            color: "danger",
+            timeout: 3000,
+          });
+          router.push("/");
         }
       }
     } catch (error) {

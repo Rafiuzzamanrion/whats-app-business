@@ -25,7 +25,7 @@ export const Navbar = () => {
   const pathName = usePathname();
   const isActive = (href: string) => pathName === href;
 
-  const { user } = useAuth();
+  const { user, isAdminOrSuperAdmin } = useAuth();
 
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
@@ -57,19 +57,21 @@ export const Navbar = () => {
               </NextLink>
             </NavbarItem>
           ))}
-          <NavbarItem>
-            <NextLink
-              className={clsx(
-                linkStyles({ color: "foreground" }),
-                `${isActive("/admin") && "text-success font-bold transition-colors"}` +
-                  "hover:text-success",
-              )}
-              color="primary"
-              href="/admin"
-            >
-              Admin
-            </NextLink>
-          </NavbarItem>
+          {isAdminOrSuperAdmin && (
+            <NavbarItem>
+              <NextLink
+                className={clsx(
+                  linkStyles({ color: "foreground" }),
+                  `${isActive("/admin") && "text-success font-bold transition-colors"}` +
+                    "hover:text-success",
+                )}
+                color="primary"
+                href="/admin"
+              >
+                Admin
+              </NextLink>
+            </NavbarItem>
+          )}
         </ul>
       </NavbarContent>
 
@@ -78,7 +80,7 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          {!user? (
+          {!user ? (
             <Button color={"success"} size={"sm"} variant={"shadow"}>
               <NextLink className="flex items-center gap-1" href="/auth/signin">
                 Login
@@ -143,6 +145,21 @@ export const Navbar = () => {
               </Link>
             </NavbarMenuItem>
           ))}
+          {isAdminOrSuperAdmin && (
+            <NavbarItem>
+              <NextLink
+                className={clsx(
+                  linkStyles({ color: "foreground" }),
+                  `${isActive("/admin") && "text-success font-bold transition-colors"}` +
+                  "hover:text-success",
+                )}
+                color="primary"
+                href="/admin"
+              >
+                Admin
+              </NextLink>
+            </NavbarItem>
+          )}
         </div>
       </NavbarMenu>
     </HeroUINavbar>

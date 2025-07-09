@@ -1,4 +1,3 @@
-
 "use client";
 
 import { signOut } from "next-auth/react";
@@ -26,22 +25,15 @@ export default function Dashboard() {
               <h1 className="text-xl font-semibold">Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              {isSuperAdmin && (
-                <Link
-                  className="text-purple-600 hover:text-purple-500 font-medium"
-                  href="/admin/superAdminPanel"
-                >
-                  Super Admin Panel
-                </Link>
-              )}
-              {isAdmin && (
-                <Link
-                  className="text-blue-600 hover:text-blue-500 font-medium"
-                  href="/admin/adminPanel"
-                >
-                  Admin Panel
-                </Link>
-              )}
+              {isAdmin ||
+                (isSuperAdmin && (
+                  <Link
+                    className="text-blue-600 hover:text-blue-500 font-medium"
+                    href="/admin/adminPanel"
+                  >
+                    Admin Panel
+                  </Link>
+                ))}
               <button
                 className="text-red-600 hover:text-red-500 font-medium"
                 onClick={() => signOut()}
@@ -87,9 +79,7 @@ export default function Dashboard() {
               </div>
 
               <div className="mt-8">
-                <h3 className="text-lg font-medium  mb-4">
-                  Quick Actions
-                </h3>
+                <h3 className="text-lg font-medium  mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">
                     Update Profile

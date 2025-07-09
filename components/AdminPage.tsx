@@ -22,6 +22,8 @@ import { Chip } from "@heroui/chip";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
 
 import { useRequireAdmin } from "@/app/hooks/use-auth";
+import CustomToastComponent from "@/components/CustomToastComponent";
+import {addToast} from "@heroui/react";
 
 interface User {
   id: string;
@@ -70,9 +72,21 @@ export default function AdminPanel() {
       });
 
       if (response.ok) {
-        fetchUsers();
+        await fetchUsers();
+        addToast({
+          title: "Success",
+          description: "Role updated successfully",
+          color: "success",
+          timeout: 2000,
+        })
       } else {
         setError("Failed to update user role");
+        addToast({
+          title: "Error",
+          description: "Failed to update role",
+          color: "danger",
+          timeout: 2000,
+        })
       }
     } catch (error) {
       setError("Network error");
@@ -108,7 +122,7 @@ export default function AdminPanel() {
 
   return (
     <div className="min-h-screen">
-      <Navbar className={'w-full'} isBordered>
+      <Navbar isBordered className={"w-full"}>
         <NavbarBrand>
           <h1 className="text-xl font-semibold text-primary">Admin Panel</h1>
         </NavbarBrand>
@@ -117,9 +131,9 @@ export default function AdminPanel() {
             <NavbarItem>
               <Link
                 className="text-purple-600 hover:text-purple-500 font-medium"
-                href="/admin/adminPanel"
+                href="/admin"
               >
-                Admin Panel
+                Dashboard
               </Link>
             </NavbarItem>
           )}
@@ -158,7 +172,9 @@ export default function AdminPanel() {
                     <TableCell>{userItem.id}</TableCell>
                     <TableCell>
                       {user?.id === userItem?.id ? (
-                        <Chip variant={"flat"} color={"success"}>{userItem.name || "N/A"}</Chip>
+                        <Chip color={"success"} variant={"flat"}>
+                          {userItem.name || "N/A"}
+                        </Chip>
                       ) : (
                         userItem.name || "N/A"
                       )}

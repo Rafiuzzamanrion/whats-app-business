@@ -9,6 +9,7 @@ import { fontGeologica } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import Footer from "@/components/Footer";
 import AuthProvider from "@/components/nextAuthProviders";
+import ToastProviders from "@/components/ToasProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -53,7 +54,7 @@ export default function RootLayout({
                 className="container mx-auto min-w-full px-6"
                 suppressHydrationWarning={true}
               >
-                {children}
+                <ToastProviders>{children}</ToastProviders>
               </main>
               <Footer />
             </div>
