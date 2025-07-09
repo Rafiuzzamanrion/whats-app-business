@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useAuth } from "@/app/hooks/use-auth";
 
 export default function Dashboard() {
-  const { user, isLoading, isAdmin, isSuperAdmin } = useAuth();
+  const { user, isLoading, isAdmin, isSuperAdmin, isAdminOrSuperAdmin } =
+    useAuth();
 
   if (isLoading) {
     return (
@@ -25,15 +26,14 @@ export default function Dashboard() {
               <h1 className="text-xl font-semibold">Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              {isAdmin ||
-                (isSuperAdmin && (
-                  <Link
-                    className="text-blue-600 hover:text-blue-500 font-medium"
-                    href="/admin/adminPanel"
-                  >
-                    Admin Panel
-                  </Link>
-                ))}
+              {isAdminOrSuperAdmin && (
+                <Link
+                  className="text-blue-600 hover:text-blue-500 font-medium"
+                  href="/admin/adminPanel"
+                >
+                  Admin Panel
+                </Link>
+              )}
               <button
                 className="text-red-600 hover:text-red-500 font-medium"
                 onClick={() => signOut()}

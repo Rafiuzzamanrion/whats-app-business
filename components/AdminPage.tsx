@@ -34,7 +34,7 @@ interface User {
 }
 
 export default function AdminPanel() {
-  const { user, isSuperAdmin, isAdmin } = useRequireAdmin();
+  const { user, isSuperAdmin, isAdminOrSuperAdmin } = useRequireAdmin();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -77,7 +77,7 @@ export default function AdminPanel() {
           title: "Success",
           description: "Role updated successfully",
           color: "success",
-          timeout: 2000,
+          timeout: 3000,
         })
       } else {
         setError("Failed to update user role");
@@ -85,7 +85,7 @@ export default function AdminPanel() {
           title: "Error",
           description: "Failed to update role",
           color: "danger",
-          timeout: 2000,
+          timeout: 3000,
         })
       }
     } catch (error) {
@@ -94,15 +94,39 @@ export default function AdminPanel() {
   };
 
   const deleteUser = async (userId: string) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+    if (!isSuperAdmin) {
+      addToast({
+        title: "Unauthorized",
+        description: "You are not authorized to delete users.",
+        color: "danger",
+        timeout: 3000,
+      });
 
+      return;
+    }
+    if (user?.id === userId) {
+      addToast({
+        title: "Error",
+        description: "You cannot delete your own account.",
+        color: "danger",
+        timeout: 3000,
+      });
+
+      return;
+    }
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
-        fetchUsers();
+        await fetchUsers();
+        addToast({
+          title: "Success",
+          description: "User deleted successfully",
+          color: "success",
+          timeout: 3000,
+        })
       } else {
         setError("Failed to delete user");
       }
@@ -127,7 +151,7 @@ export default function AdminPanel() {
           <h1 className="text-xl font-semibold text-primary">Admin Panel</h1>
         </NavbarBrand>
         <NavbarContent justify="end">
-          {(isSuperAdmin || isAdmin) && (
+          {isAdminOrSuperAdmin && (
             <NavbarItem>
               <Link
                 className="text-purple-600 hover:text-purple-500 font-medium"
