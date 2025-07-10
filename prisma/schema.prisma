@@ -68,3 +68,29 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verificationtokens")
 }
+
+model Package {
+  id          String   @id @default(uuid())
+  name        String
+  subtitle    String
+  icon        String
+  gradient    String
+  bgGradient  String
+  borderColor String
+  features    String[]
+  badge       String
+  popular     Boolean  @default(false)
+  instant     Boolean  @default(false)
+  pricing     Pricing  @relation(fields: [pricingId], references: [id])
+  pricingId   String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Pricing {
+  id       String   @id @default(uuid())
+  setup    String
+  messaging String
+  note     String
+  package  Package?
+}
