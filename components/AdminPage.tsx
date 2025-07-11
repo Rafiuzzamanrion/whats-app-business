@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -20,10 +20,10 @@ import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
 import { Chip } from "@heroui/chip";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
+import { addToast } from "@heroui/react";
 
 import { useRequireAdmin } from "@/app/hooks/use-auth";
-import CustomToastComponent from "@/components/CustomToastComponent";
-import {addToast} from "@heroui/react";
+import Unauthorized from "@/components/Unathorized";
 
 interface User {
   id: string;
@@ -78,7 +78,7 @@ export default function AdminPanel() {
           description: "Role updated successfully",
           color: "success",
           timeout: 3000,
-        })
+        });
       } else {
         setError("Failed to update user role");
         addToast({
@@ -86,7 +86,7 @@ export default function AdminPanel() {
           description: "Failed to update role",
           color: "danger",
           timeout: 3000,
-        })
+        });
       }
     } catch (error) {
       setError("Network error");
@@ -126,7 +126,7 @@ export default function AdminPanel() {
           description: "User deleted successfully",
           color: "success",
           timeout: 3000,
-        })
+        });
       } else {
         setError("Failed to delete user");
       }
@@ -143,6 +143,20 @@ export default function AdminPanel() {
     ADMIN: "warning",
     USER: "success",
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg flex items-center gap-2">
+          <Spinner color={"success"} size={"lg"} variant={"default"} />
+          Loading...
+        </div>
+      </div>
+    );
+  }
+  if (!isAdminOrSuperAdmin) {
+    return <Unauthorized />;
+  }
 
   return (
     <div className="min-h-screen">

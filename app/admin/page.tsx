@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Spinner } from "@heroui/spinner";
 
 import { useAuth } from "@/app/hooks/use-auth";
+import Unauthorized from "@/components/Unathorized";
 
 export default function Dashboard() {
   const { user, isLoading, isAdmin, isSuperAdmin, isAdminOrSuperAdmin } =
@@ -13,7 +14,7 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">
+        <div className="text-lg flex items-center gap-2">
           <Spinner color={"success"} size={"lg"} variant={"default"} />
           Loading...
         </div>
@@ -21,7 +22,10 @@ export default function Dashboard() {
     );
   }
 
-  if(!isAdminOr)
+  if (!isAdminOrSuperAdmin) {
+    return <Unauthorized />;
+  }
+
   return (
     <div className="min-h-screen">
       <nav className="shadow">
