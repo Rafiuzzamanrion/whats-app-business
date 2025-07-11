@@ -2,6 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { Spinner } from "@heroui/spinner";
 
 import { useAuth } from "@/app/hooks/use-auth";
 
@@ -12,11 +13,15 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
+        <div className="text-lg">
+          <Spinner color={"success"} size={"lg"} variant={"default"} />
+          Loading...
+        </div>
       </div>
     );
   }
 
+  if(!isAdminOr)
   return (
     <div className="min-h-screen">
       <nav className="shadow">

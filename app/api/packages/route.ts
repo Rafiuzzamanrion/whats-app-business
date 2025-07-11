@@ -15,7 +15,7 @@ export const POST = async (request: NextRequest) => {
     bgGradient,
     borderColor,
     features,
-    pricing, // { setup, messaging, note }
+    pricing,
     badge,
     popular,
     instant,
@@ -24,7 +24,7 @@ export const POST = async (request: NextRequest) => {
   try {
     const session = await getServerSession(authOptions);
 
-    // Auth check
+
     if (
       !session ||
       (session.user.role !== Role.ADMIN &&
@@ -33,7 +33,6 @@ export const POST = async (request: NextRequest) => {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Validation
     if (
       !name ||
       !subtitle ||
@@ -51,7 +50,6 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    // Create package with nested Pricing
     const packageData = await prisma.package.create({
       data: {
         name,
@@ -66,7 +64,6 @@ export const POST = async (request: NextRequest) => {
         instant: Boolean(instant),
         pricing: {
           create: {
-            // Creates a new Pricing entry
             setup: pricing.setup,
             messaging: pricing.messaging,
             note: pricing.note,
@@ -74,7 +71,7 @@ export const POST = async (request: NextRequest) => {
         },
       },
       include: {
-        pricing: true, // Optional: Returns the created Pricing in the response
+        pricing: true,
       },
     });
 
