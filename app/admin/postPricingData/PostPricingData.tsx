@@ -137,13 +137,12 @@ const PackageManager: React.FC = () => {
     setCurrentPackage((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange =
-    (name: keyof Package) => (selectedItem: { value: string }) => {
-      setCurrentPackage((prev) => ({
-        ...prev,
-        [name]: selectedItem.value,
-      }));
-    };
+  const handleSelectChange = (name: keyof Package, value: string) => {
+    setCurrentPackage((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handlePricingChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -155,7 +154,6 @@ const PackageManager: React.FC = () => {
       pricing: { ...prev.pricing, [name]: value },
     }));
   };
-
 
   const handleFeatureChange = (index: number, value: string) => {
     const newFeatures = [...currentPackage.features];
@@ -292,7 +290,7 @@ const PackageManager: React.FC = () => {
         <Button
           color="primary"
           startContent={<Plus size={18} />}
-          onClick={() => setIsModalOpen(true)}
+          onPress={() => setIsModalOpen(true)}
         >
           Add New Package
         </Button>
@@ -449,12 +447,14 @@ const PackageManager: React.FC = () => {
                 label="Icon"
                 name="icon"
                 selectedKeys={[currentPackage.icon]}
-                onChange={(value: String) => handleSelectChange(value, "icon")}
+                onSelectionChange={(keys) => {
+                  const selectedKey = Array.from(keys)[0] as string;
+
+                  handleSelectChange("icon", selectedKey);
+                }}
               >
                 {iconOptions.map((icon) => (
-                  <SelectItem key={icon.value} value={icon.value}>
-                    {icon.label}
-                  </SelectItem>
+                  <SelectItem key={icon.value}>{icon.label}</SelectItem>
                 ))}
               </Select>
 
@@ -462,12 +462,14 @@ const PackageManager: React.FC = () => {
                 label="Gradient Color"
                 name="gradient"
                 selectedKeys={[currentPackage.gradient]}
-                onChange={(value) => handleSelectChange(value, "gradient")}
+                onSelectionChange={(keys) => {
+                  const selectedKey = Array.from(keys)[0] as string;
+
+                  handleSelectChange("gradient", selectedKey);
+                }}
               >
                 {gradientOptions.map((gradient) => (
-                  <SelectItem key={gradient.value} value={gradient.value}>
-                    {gradient.label}
-                  </SelectItem>
+                  <SelectItem key={gradient.value}>{gradient.label}</SelectItem>
                 ))}
               </Select>
 
@@ -482,12 +484,12 @@ const PackageManager: React.FC = () => {
                         handleFeatureChange(index, e.target.value)
                       }
                     />
-                    <Button size="sm" onClick={() => removeFeature(index)}>
+                    <Button size="sm" onPress={() => removeFeature(index)}>
                       <X size={16} />
                     </Button>
                   </div>
                 ))}
-                <Button size="sm" onClick={addFeature}>
+                <Button size="sm" onPress={addFeature}>
                   Add Feature
                 </Button>
               </div>
@@ -513,7 +515,12 @@ const PackageManager: React.FC = () => {
                 label="Pricing Note"
                 name="note"
                 value={currentPackage.pricing.note}
-                onChange={handlePricingChange}
+                onValueChange={(value) => {
+                  setCurrentPackage((prev) => ({
+                    ...prev,
+                    pricing: { ...prev.pricing, note: value },
+                  }));
+                }}
               />
 
               <Divider />
@@ -522,29 +529,45 @@ const PackageManager: React.FC = () => {
                 label="Badge Text"
                 name="badge"
                 value={currentPackage.badge}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  handleTextareaChange(e)
-                }
+                onValueChange={(value) => {
+                  setCurrentPackage((prev) => ({ ...prev, badge: value }));
+                }}
               />
 
               <div className="flex gap-4">
                 <Checkbox
                   isSelected={currentPackage.popular}
-                  label="Popular Package"
                   name="popular"
-                  onChange={handleCheckboxChange}
-                />
+                  onValueChange={(checked) => {
+                    setCurrentPackage((prev) => ({
+                      ...prev,
+                      popular: checked,
+                    }));
+                  }}
+                >
+                  Popular Package
+                </Checkbox>
                 <Checkbox
                   isSelected={currentPackage.instant}
-                  label="Instant Activation"
                   name="instant"
-                  onChange={handleCheckboxChange}
-                />
+                  onValueChange={(checked) => {
+                    setCurrentPackage((prev) => ({
+                      ...prev,
+                      instant: checked,
+                    }));
+                  }}
+                >
+                  Instant Activation
+                </Checkbox>
               </div>
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+            <Button
+              color={"danger"}
+              variant="shadow"
+              onPress={() => setIsModalOpen(false)}
+            >
               Cancel
             </Button>
             <Button
