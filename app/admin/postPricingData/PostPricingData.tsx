@@ -156,6 +156,7 @@ const PackageManager: React.FC = () => {
     }));
   };
 
+
   const handleFeatureChange = (index: number, value: string) => {
     const newFeatures = [...currentPackage.features];
 
