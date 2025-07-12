@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Spinner } from "@heroui/spinner";
 
 import { useAuth } from "@/app/hooks/use-auth";
-import Unauthorized from "@/components/Unathorized";
 
 export default function Dashboard() {
   const { user, isLoading, isAdmin, isSuperAdmin, isAdminOrSuperAdmin } =
@@ -20,10 +19,6 @@ export default function Dashboard() {
         </div>
       </div>
     );
-  }
-
-  if (!isAdminOrSuperAdmin) {
-    return <Unauthorized />;
   }
 
   return (

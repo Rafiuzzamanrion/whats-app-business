@@ -27,8 +27,8 @@ export default function Unauthorized() {
           <div className="flex flex-col space-y-4">
             <Button
               className="w-full"
-              color="primary"
-              endContent={<ArrowRight className="ml-2 h-4 w-4" />}
+              color="success"
+              endContent={<ArrowRight className="h-4 w-4" />}
               variant={"shadow"}
               onClick={() => router.push("/auth/signin")}
             >

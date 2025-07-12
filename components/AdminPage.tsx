@@ -165,16 +165,23 @@ export default function AdminPanel() {
           <h1 className="text-xl font-semibold text-primary">Admin Panel</h1>
         </NavbarBrand>
         <NavbarContent justify="end">
-          {isAdminOrSuperAdmin && (
-            <NavbarItem>
-              <Link
-                className="text-purple-600 hover:text-purple-500 font-medium"
-                href="/admin"
-              >
-                Dashboard
-              </Link>
-            </NavbarItem>
-          )}
+          <NavbarItem>
+            <Link
+              className="text-purple-600 hover:text-purple-500 font-medium"
+              href="/admin"
+            >
+              Dashboard
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link
+              className="text-purple-600 hover:text-purple-500 font-medium"
+              href="/admin/postPricingData"
+            >
+              Add Package
+            </Link>
+          </NavbarItem>
+
           <NavbarItem>
             <span className="text-sm text-foreground-500">
               {user?.name || user?.email} ({user?.role})
