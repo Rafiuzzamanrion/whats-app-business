@@ -1,7 +1,10 @@
-/** @type {import('next').NextConfig} */
+/** @type {import("next").NextConfig} */
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  images: {
+    domains: ["heroui.com"],
   },
 };
 

@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Check,
@@ -8,7 +9,13 @@ import {
   Clock,
   Shield,
   Rocket,
+  ShieldCheck,
+  CheckCircle,
 } from "lucide-react";
+import { BsWhatsapp } from "react-icons/bs";
+import { FaLongArrowAltRight, FaShoppingCart } from "react-icons/fa";
+import { Button } from "@heroui/button";
+import Link from "next/link";
 
 const Pricing = () => {
   const packages = [
@@ -234,21 +241,71 @@ const Pricing = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-16 text-center bg-white rounded-2xl p-8 shadow-xl">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
-            Ready to Scale Your WhatsApp Marketing?
-          </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            All packages include professional setup, dedicated support, and full
-            campaign management. Contact us for custom enterprise solutions.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105">
-              Contact Sales
-            </button>
-            <button className="border-2 border-gray-300 text-gray-700 px-8 py-3 rounded-xl font-semibold hover:border-gray-400 transition-all duration-300">
-              View Demo
-            </button>
+        <div className="mt-16 text-center bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
+          <div className="max-w-2xl mx-auto">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              Need WhatsApp Business API Instantly?
+            </h3>
+            <p className="text-lg text-gray-600 mb-8">
+              Our verified WhatsApp Business API solutions include:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-left">
+              <div className="flex items-start">
+                <div className="bg-green-100 p-2 rounded-lg mr-4">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900">
+                    Official Approval
+                  </h4>
+                  <p className="text-gray-600 text-sm">
+                    Guaranteed WhatsApp approval
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <div className="bg-blue-100 p-2 rounded-lg mr-4">
+                  <ShieldCheck className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900">
+                    Secure Messaging
+                  </h4>
+                  <p className="text-gray-600 text-sm">End-to-end encrypted</p>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <div className="bg-purple-100 p-2 rounded-lg mr-4">
+                  <Zap className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900">Fast Setup</h4>
+                  <p className="text-gray-600 text-sm">Ready in 24-48 hours</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href={"/businessApi"}>
+                <Button color={"primary"} variant={"shadow"}>
+                  <FaShoppingCart className="h-5 w-5" />
+                  Buy Now <FaLongArrowAltRight size={20} />
+                </Button>
+              </Link>
+              <Button
+                color={"success"}
+                variant={"shadow"}
+                onClick={() =>
+                  window.open("https://wa.me/1234567890", "_blank")
+                }
+              >
+                <BsWhatsapp className="h-5 w-5" />
+                Message Us
+              </Button>
+            </div>
           </div>
         </div>
       </div>

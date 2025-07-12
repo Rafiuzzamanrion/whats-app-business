@@ -34,11 +34,11 @@ export const Navbar = () => {
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Image
               alt="Picture of the author"
-              height={30}
-              src="/whatsapp.png"
-              width={30}
+              className={"object-cover"}
+              height={50}
+              src="/logo.png"
+              width={60}
             />
-            <p className="font-bold text-inherit">WAPI Cloud</p>
           </NextLink>
         </NavbarBrand>
         <ul className="hidden md:flex gap-6 justify-start ml-2">
@@ -151,7 +151,7 @@ export const Navbar = () => {
                 className={clsx(
                   linkStyles({ color: "foreground" }),
                   `${isActive("/admin") && "text-success font-bold transition-colors"}` +
-                  "hover:text-success",
+                    "hover:text-success",
                 )}
                 color="primary"
                 href="/admin"
