@@ -52,6 +52,7 @@ interface SelectOption {
   label: string;
   value: string;
 }
+
 interface PackageFormElements extends HTMLFormControlsCollection {
   name: HTMLInputElement;
   subtitle: HTMLInputElement;
@@ -64,6 +65,7 @@ interface PackageFormElements extends HTMLFormControlsCollection {
 interface PackageFormElement extends HTMLFormElement {
   readonly elements: PackageFormElements;
 }
+
 const PackageManager: React.FC = () => {
   const [packages, setPackages] = useState<Package[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -208,10 +210,11 @@ const PackageManager: React.FC = () => {
       // Axios request with proper typing
       const response = await axios.post<Package>("/api/packages", packageData);
 
+      if (response.status) {
+        console.log("Package saved successfully:", response.status);
+      }
       // Handle successful response
       const newPackage = response.data;
-
-      console.log("newPackage", newPackage);
 
       if (editingIndex !== null) {
         setPackages((prev) =>
@@ -279,8 +282,6 @@ const PackageManager: React.FC = () => {
     });
     setEditingIndex(null);
   };
-
-  console.log("packages", packages);
 
   // @ts-ignore
   return (
@@ -421,6 +422,7 @@ const PackageManager: React.FC = () => {
       <Modal
         className={"overflow-y-scroll h-[600px]"}
         isOpen={isModalOpen}
+        size="3xl"
         onClose={() => setIsModalOpen(false)}
       >
         <ModalContent>

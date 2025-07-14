@@ -1,0 +1,253 @@
+"use client";
+import React, { FormEvent, useEffect, useState, useTransition } from "react";
+import {
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from "@heroui/react";
+import { Button } from "@heroui/button";
+import { CiCirclePlus } from "react-icons/ci";
+import axios from "axios";
+
+import { useCloudinaryUpload } from "@/app/hooks/useCloudinaryUpload";
+
+type FormData = {
+  title: string;
+  description: string;
+  file: FileList | null;
+};
+
+type FormAction =
+  | "reset"
+  | {
+      type: "submit";
+      data: Omit<FormData, "file"> & { file?: string };
+    }
+  | null;
+
+const Page = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [action, setAction] = useState<FormAction>(null);
+  const [formData, setFormData] = useState<FormData>({
+    title: "",
+    description: "",
+    file: null,
+  });
+  const [isPending, startTransition] = useTransition();
+  const [data, setData] = useState<any>(null);
+  const { upload, isLoading, error, result, reset } = useCloudinaryUpload();
+
+  console.log("action", action);
+  console.log("formData", formData);
+
+  const handleOpen = () => {
+    onOpen();
+  };
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/api/businessApi");
+
+      if (response.status === 200) {
+        setData(response.data);
+        console.log("Fetched data:", response.data);
+      } else {
+        console.error("Failed to fetch data:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const updateFormData = (field: keyof FormData, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const updateAction = (field: keyof FormData, value: any) => {
+    setAction((prevState) => {
+      if (!prevState || prevState === "reset") {
+        return {
+          type: "submit",
+          data: {
+            title: field === "title" ? value : "",
+            description: field === "description" ? value : "",
+            file: field === "file" ? value : undefined,
+          },
+        };
+      }
+
+      return {
+        ...prevState,
+        data: {
+          ...prevState.data,
+          [field]: value,
+        },
+      };
+    });
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    startTransition(async () => {
+      try {
+        let fileUrl: string | undefined;
+
+        if (formData.file && formData.file.length > 0) {
+          const file = formData.file[0];
+          const uploadResult = await upload(file);
+
+          fileUrl = uploadResult.url;
+          console.log("Uploaded file URL:", fileUrl);
+        } else {
+          console.warn("No file selected");
+        }
+
+        setAction({
+          type: "submit",
+          data: {
+            title: formData.title,
+            description: formData.description,
+            file: fileUrl,
+          },
+        });
+      } catch (error) {
+        console.error("Submission failed:", error);
+      }
+    });
+  };
+
+  const handleReset = () => {
+    setAction("reset");
+    setFormData({
+      title: "",
+      description: "",
+      file: null,
+    });
+  };
+
+  return (
+    <div className={"min-h-screen"}>
+      <div>
+        <div className="flex justify-between gap-3 mt-5">
+          <h1 className={"text-2xl text-success"}>
+            Create New Business API Data
+          </h1>
+          <Button color={"success"} variant={"shadow"} onPress={handleOpen}>
+            <CiCirclePlus size={25} /> Add Business API
+          </Button>
+        </div>
+        <Modal isOpen={isOpen} size="3xl" onClose={onClose}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  <h2 className="text-2xl font-semibold text-success">
+                    Add Business API
+                  </h2>
+                  <p className="text-sm text-gray-400">
+                    Fill in the details below to add a new business API.
+                  </p>
+                </ModalHeader>
+                <ModalBody>
+                  <form className={"space-y-12"} onSubmit={handleSubmit}>
+                    <Input
+                      isRequired
+                      errorMessage="Please enter a valid Title"
+                      label="Title"
+                      labelPlacement="outside"
+                      name="title"
+                      placeholder="Enter your title"
+                      type="text"
+                      value={formData.title}
+                      onValueChange={(value) => {
+                        updateFormData("title", value);
+                        updateAction("title", value);
+                      }}
+                    />
+
+                    <Input
+                      isRequired
+                      errorMessage="Please enter a valid Description"
+                      label="Description"
+                      labelPlacement="outside"
+                      name="description"
+                      placeholder="Enter your description"
+                      type="text"
+                      value={formData.description}
+                      onValueChange={(value) => {
+                        updateFormData("description", value);
+                        updateAction("description", value);
+                      }}
+                    />
+
+                    <Input
+                      isRequired
+                      errorMessage="Please choose a file"
+                      label="File"
+                      labelPlacement="outside"
+                      name="file"
+                      placeholder="Choose a file"
+                      type="file"
+                      onChange={(e) => {
+                        const files = e.target.files;
+
+                        updateFormData("file", files);
+                        updateAction("file", files?.[0]?.name);
+                      }}
+                    />
+
+                    <div className="flex gap-2 mt-6 justify-end">
+                      <Button
+                        color="primary"
+                        disabled={isPending}
+                        isLoading={isPending}
+                        type="submit"
+                      >
+                        {isPending ? "Submitting..." : "Submit"}
+                      </Button>
+                      <Button
+                        disabled={isPending}
+                        type="button"
+                        variant="flat"
+                        onPress={handleReset}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+
+                    {error && (
+                      <div className="text-small text-danger">
+                        Error: {error}
+                      </div>
+                    )}
+                  </form>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Close
+                  </Button>
+                  <Button color="primary" onPress={onClose}>
+                    Action
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      </div>
+    </div>
+  );
+};
+
+export default Page;

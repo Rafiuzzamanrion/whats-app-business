@@ -181,6 +181,14 @@ export default function AdminPanel() {
               Add Package
             </Link>
           </NavbarItem>
+          <NavbarItem>
+            <Link
+              className="text-purple-600 hover:text-purple-500 font-medium"
+              href="/admin/postBusinessApi"
+            >
+              Add Business API
+            </Link>
+          </NavbarItem>
 
           <NavbarItem>
             <span className="text-sm text-foreground-500">
