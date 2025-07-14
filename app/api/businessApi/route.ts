@@ -15,9 +15,13 @@ export const POST = async (request: Request) => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = await request.json();
-  const { title, description, file } = body;
 
-  if (!title || !description || !file) {
+  console.log("Received body:", body);
+  const { title, description, file, price } = body?.data;
+
+  console.log("Parsed fields:", { title, description, file });
+
+  if (!title || !description || !file || !price) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 },
@@ -29,6 +33,7 @@ export const POST = async (request: Request) => {
       data: {
         title,
         description,
+        price,
         file,
       },
     });
