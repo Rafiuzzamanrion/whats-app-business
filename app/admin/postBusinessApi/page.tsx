@@ -197,7 +197,7 @@ const Page = () => {
             className={"grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 md:px-16"}
           >
             {data?.map((item: DataItem) => (
-              <Card key={item?.id} className="pt-1 pb-4 h-[500px]">
+              <Card key={item?.id} className="pt-1 pb-4 h-[520px]">
                 <CardBody className="overflow-visible py-2 flex items-center">
                   <Image
                     alt="Card background"
@@ -217,7 +217,7 @@ const Page = () => {
                   </small>
                 </CardHeader>
 
-                <div className={"flex justify-center items-center"}>
+                <div className={"flex justify-end items-center px-5 py-1"}>
                   <Button
                     color={"danger"}
                     variant={"bordered"}
