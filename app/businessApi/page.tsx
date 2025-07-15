@@ -6,6 +6,7 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Image } from "@heroui/image";
 import axios from "axios";
+import { Spinner } from "@heroui/spinner";
 
 type DataItem = {
   id: string;
@@ -18,19 +19,23 @@ type DataItem = {
 };
 const Page = () => {
   const [data, setData] = React.useState<any>(null);
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("/api/businessApi");
+  const [isPending, startTransition] = React.useTransition();
 
-      if (response.status === 200) {
-        setData(response.data);
-        console.log("Fetched data:", response.data);
-      } else {
-        console.error("Failed to fetch data:", response.statusText);
+  const fetchData = async () => {
+    startTransition(async () => {
+      try {
+        const response = await axios.get("/api/businessApi");
+
+        if (response.status === 200) {
+          setData(response.data);
+          console.log("Fetched data:", response.data);
+        } else {
+          console.error("Failed to fetch data:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    });
   };
 
   useEffect(() => {
@@ -70,41 +75,49 @@ const Page = () => {
         <h1 className="text-4xl text-center font-bold mb-8 text-success uppercase">
           WhatsApp Business API Plans
         </h1>
-        <div
-          className={"grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 md:px-16"}
-        >
-          {data?.map((item: DataItem) => (
-            <Card key={item.id} className="pt-1 pb-4 h-[520px]">
-              <CardBody className="overflow-visible py-2 flex items-center">
-                <Image
-                  alt="Card background"
-                  className="object-cover rounded-xl"
-                  height={300}
-                  // isLoading={true}
-                  isZoomed={true}
-                  src={item?.file}
-                  width={300}
-                />
-              </CardBody>
-              <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-                <h4 className="font-bold text-large my-1">{item.title}</h4>
-                <p className="text-tiny uppercase font-bold">${item.price}</p>
-                <small className="text-default-500 my-1">
-                  {item.description}
-                </small>
-              </CardHeader>
-              <div className={"flex justify-end items-center px-5 py-1"}>
-                <Button
-                  color={"success"}
-                  variant={"bordered"}
-                  // onPress={() => handleDelete(item.id)}
-                >
-                  Buy Now
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
+        {isPending ? (
+          <div className="flex items-center justify-center h-64">
+            <Spinner color={"success"} size={"lg"} variant={"default"} />
+          </div>
+        ) : (
+          <div
+            className={"grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 md:px-16"}
+          >
+            {data?.map((item: DataItem) => (
+              <Card key={item.id} className="pt-1 pb-4 h-[520px]">
+                <CardBody className="overflow-visible py-2 flex items-center">
+                  <Image
+                    alt="Card background"
+                    className="object-cover rounded-xl"
+                    height={300}
+                    // isLoading={true}
+                    isZoomed={true}
+                    src={item?.file}
+                    width={300}
+                  />
+                </CardBody>
+                <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+                  <h4 className="font-bold text-large my-1">{item.title}</h4>
+                  <p className="text-tiny uppercase font-bold">${item.price}</p>
+                  <small className="text-default-500 my-1">
+                    {item.description}
+                  </small>
+                </CardHeader>
+                <div className={"flex justify-end items-center px-5 py-1"}>
+                  <Link href={"/checkout/" + item.id}>
+                    <Button
+                      color={"success"}
+                      variant={"bordered"}
+                      // onPress={() => handleDelete(item.id)}
+                    >
+                      Buy Now
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

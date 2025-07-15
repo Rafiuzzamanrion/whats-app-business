@@ -5,13 +5,13 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   useDisclosure,
 } from "@heroui/react";
 import { Button } from "@heroui/button";
 import { CiCirclePlus } from "react-icons/ci";
 import axios from "axios";
+import { Spinner } from "@heroui/spinner";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Image } from "@heroui/image";
 
@@ -51,24 +51,27 @@ const Page = () => {
   });
   const [isPending, startTransition] = useTransition();
   const [data, setData] = useState<any>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { upload, isLoading, error, result, reset } = useCloudinaryUpload();
 
   const handleOpen = () => {
     onOpen();
   };
   const fetchData = async () => {
-    try {
-      const response = await axios.get("/api/businessApi");
+    startTransition(async () => {
+      try {
+        const response = await axios.get("/api/businessApi");
 
-      if (response.status === 200) {
-        setData(response.data);
-        console.log("Fetched data:", response.data);
-      } else {
-        console.error("Failed to fetch data:", response.statusText);
+        if (response.status === 200) {
+          setData(response.data);
+          console.log("Fetched data:", response.data);
+        } else {
+          console.error("Failed to fetch data:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    });
   };
 
   useEffect(() => {
@@ -163,19 +166,22 @@ const Page = () => {
   console.log("data:", data);
 
   const handleDelete = async (id: string) => {
-    try {
-      const response = await axios.delete(`/api/businessApi`, {
-        data: { id }, // Send id in request body
-      });
+    startTransition(async () => {
+      try {
+        setDeletingId(id);
+        const response = await axios.delete(`/api/businessApi`, {
+          data: { id },
+        });
 
-      if (response.status === 200) {
-        fetchData();
-      } else {
-        console.error("Failed to delete Business API:", response.statusText);
+        if (response.status === 200) {
+          fetchData();
+        } else {
+          console.error("Failed to delete Business API:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error deleting Business API:", error);
       }
-    } catch (error) {
-      console.error("Error deleting Business API:", error);
-    }
+    });
   };
 
   return (
@@ -189,46 +195,61 @@ const Page = () => {
             <CiCirclePlus size={25} /> Add Business API
           </Button>
         </div>
-        <div className={"my-28"}>
+        <div className={"my-8"}>
           <h1 className="text-4xl text-center font-bold mb-8 text-success uppercase">
             WhatsApp Business API Plans
           </h1>
-          <div
-            className={"grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 md:px-16"}
-          >
-            {data?.map((item: DataItem) => (
-              <Card key={item?.id} className="pt-1 pb-4 h-[520px]">
-                <CardBody className="overflow-visible py-2 flex items-center">
-                  <Image
-                    alt="Card background"
-                    className="object-cover rounded-xl"
-                    height={300}
-                    // isLoading={}
-                    isZoomed={true}
-                    src={item.file}
-                    width={300}
-                  />
-                </CardBody>
-                <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-                  <h4 className="font-bold text-large my-1">{item.title}</h4>
-                  <p className="text-tiny uppercase font-bold">${item.price}</p>
-                  <small className="text-default-500 my-1">
-                    {item.description}
-                  </small>
-                </CardHeader>
+          {isPending ? (
+            <div className="flex items-center justify-center h-64">
+              <Spinner color={"success"} size={"lg"} variant={"default"} />
+            </div>
+          ) : (
+            <div
+              className={
+                "grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 md:px-16"
+              }
+            >
+              {data?.map((item: DataItem) => (
+                <Card key={item?.id} className="pt-1 pb-4 h-[520px]">
+                  <CardBody className="overflow-visible py-2 flex items-center">
+                    <Image
+                      alt="Card background"
+                      className="object-cover rounded-xl"
+                      height={300}
+                      // isLoading={}
+                      isZoomed={true}
+                      src={item.file}
+                      width={300}
+                    />
+                  </CardBody>
+                  <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+                    <h4 className="font-bold text-large my-1">{item.title}</h4>
+                    <p className="text-tiny uppercase font-bold">
+                      ${item.price}
+                    </p>
+                    <small className="text-default-500 my-1">
+                      {item.description}
+                    </small>
+                  </CardHeader>
 
-                <div className={"flex justify-end items-center px-5 py-1"}>
-                  <Button
-                    color={"danger"}
-                    variant={"bordered"}
-                    onPress={() => handleDelete(item.id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
+                  <div className={"flex justify-end items-center px-5 py-1"}>
+                    <Button
+                      color={"danger"}
+                      variant={"bordered"}
+                      onPress={() => handleDelete(item.id)}
+                    >
+                      {isPending && item?.id === deletingId && (
+                        <Spinner color={"danger"} />
+                      )}{" "}
+                      {isPending && item.id === deletingId
+                        ? "Deleting..."
+                        : "Delete"}
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
         <Modal isOpen={isOpen} size="3xl" onClose={onClose}>
           <ModalContent>
@@ -330,14 +351,6 @@ const Page = () => {
                     )}
                   </form>
                 </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button color="primary" onPress={onClose}>
-                    Action
-                  </Button>
-                </ModalFooter>
               </>
             )}
           </ModalContent>
