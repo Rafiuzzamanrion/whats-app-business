@@ -38,12 +38,14 @@ export default function Dashboard() {
                   Admin Panel
                 </Link>
               )}
-              <button
-                className="text-red-600 hover:text-red-500 font-medium"
-                onClick={() => signOut()}
-              >
-                Sign Out
-              </button>
+              {isAdminOrSuperAdmin && (
+                <button
+                  className="text-red-600 hover:text-red-500 font-medium"
+                  onClick={() => signOut()}
+                >
+                  Sign Out
+                </button>
+              )}
             </div>
           </div>
         </div>

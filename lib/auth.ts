@@ -174,10 +174,48 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
   },
-  // Add these production-specific settings
   cookies: {
     sessionToken: {
-      name: `next-auth.session-token`,
+      name:
+        process.env.NODE_ENV === "production"
+          ? `__Secure-next-auth.session-token`
+          : `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? process.env.NEXTAUTH_URL
+              ? new URL(process.env.NEXTAUTH_URL).hostname
+              : undefined
+            : undefined,
+      },
+    },
+    callbackUrl: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? `__Secure-next-auth.callback-url`
+          : `next-auth.callback-url`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? process.env.NEXTAUTH_URL
+              ? new URL(process.env.NEXTAUTH_URL).hostname
+              : undefined
+            : undefined,
+      },
+    },
+    csrfToken: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? `__Host-next-auth.csrf-token`
+          : `next-auth.csrf-token`,
       options: {
         httpOnly: true,
         sameSite: "lax",
@@ -186,6 +224,13 @@ export const authOptions: NextAuthOptions = {
       },
     },
   },
-  // Enable debug in production temporarily
-  debug: process.env.NODE_ENV === "production",
+  // Remove debug in production for security
+  debug: process.env.NODE_ENV === "development",
+  // Add these production-specific settings
+  useSecureCookies: process.env.NODE_ENV === "production",
+  // Ensure proper JWT secret handling
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
 };
