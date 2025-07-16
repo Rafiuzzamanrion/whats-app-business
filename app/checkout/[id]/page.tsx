@@ -1,8 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
-import { Button, Input, Select, SelectItem } from "@heroui/react";
+import { addToast, Button, Input, Select, SelectItem } from "@heroui/react";
 import { LuCopyCheck } from "react-icons/lu";
+import axios from "axios";
+
+import { useCloudinaryUpload } from "@/app/hooks/useCloudinaryUpload";
 
 type FormData = {
   name: string;
@@ -10,7 +13,7 @@ type FormData = {
   activeWhatsappNumber: string;
   paymentMethod: string;
   file: File | null;
-  orderId: string;
+  productId: string;
 };
 type SelectOption = {
   label: string;
@@ -19,9 +22,9 @@ type SelectOption = {
 
 // Binance addresses data
 const BINANCE_ADDRESSES = {
-  trc20: "TNPZJ8DZQvVjXk1h1J7x5W3ZnkqX2YnYnJ",
-  bnb: "bnb1qxy2kgdygjrsqtzq2n0yrf2493p83kkfj5x4lh",
-  uid: "123456789",
+  trc20: "TKJHoSiYdCnSZnXJSGnM7zRANg6JVtZJMR",
+  bnb: "0xd112c81003add7d6925e2c0f944d192c4d0f3a0f",
+  uid: "998237852",
 };
 
 const Page = () => {
@@ -33,13 +36,34 @@ const Page = () => {
     activeWhatsappNumber: "",
     paymentMethod: "",
     file: null as File | null,
-    orderId: "",
+    productId: id as string,
   });
   const [isPending, startTransition] = React.useTransition();
   const [selectedBinanceType, setSelectedBinanceType] = React.useState<
     "trc20" | "bnb" | "uid"
   >("trc20");
   const [isCopied, setIsCopied] = React.useState(false);
+  const { upload, isLoading, error, result, reset } = useCloudinaryUpload();
+  const [data, setData] = React.useState<any>(null);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`/api/businessApi/${id}`);
+
+      if (response.status === 200) {
+        setData(response.data);
+        console.log("Fetched data:", response.data);
+      } else {
+        console.error("Failed to fetch data:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const updateFormData = (key: keyof typeof formData, value: any) => {
     setFormData((prevData) => ({
@@ -50,18 +74,60 @@ const Page = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted with data:", formData);
-  };
+    startTransition(async () => {
+      if (
+        !formData.name ||
+        !formData.email ||
+        !formData.activeWhatsappNumber ||
+        !formData.paymentMethod ||
+        !formData.file ||
+        !formData.productId
+      ) {
+        console.error("Please fill all required fields");
 
-  const handleReset = () => {
-    setFormData({
-      name: "",
-      email: "",
-      activeWhatsappNumber: "",
-      paymentMethod: "",
-      file: null,
-      orderId: "",
+        return;
+      }
+      if (formData.file && formData.file.size > 10 * 1024 * 1024) {
+        console.error("File size exceeds 5MB limit");
+
+        return;
+      }
+      try {
+        let fileUrl: string;
+
+        if (formData?.file) {
+          const { url } = await upload(formData.file);
+
+          fileUrl = url;
+        } else {
+          console.error("No file selected for upload");
+
+          return;
+        }
+        const data = {
+          ...formData,
+          file: fileUrl || "",
+        };
+        const response = await axios.post("/api/order", data);
+
+        if (response.status === 201) {
+          addToast({
+            title: "Order Placed",
+            description: "Your order has been placed successfully.",
+            color: "success",
+            timeout: 3000,
+          });
+          reset();
+        } else {
+          console.error("Failed to create order:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+
+        return;
+      }
     });
+    console.log("Form submitted with data:", formData);
   };
 
   const selectOptions: SelectOption[] = [
@@ -98,6 +164,10 @@ const Page = () => {
     <div className={"flex flex-col justify-center items-center "}>
       <h1 className="text-2xl text-center font-bold my-5 uppercase text-success">
         Checkout Page
+      </h1>
+
+      <h1 className={"text-2xl font-semibold my-4 "}>
+        Payable Amount: ${data?.price}
       </h1>
 
       <form
@@ -170,7 +240,7 @@ const Page = () => {
                 }}
               >
                 <SelectItem key="trc20">TRC20</SelectItem>
-                <SelectItem key="bnb">BNB</SelectItem>
+                <SelectItem key="bnb">BNB(BEP29)</SelectItem>
                 <SelectItem key="uid">UID</SelectItem>
               </Select>
             </div>
@@ -231,21 +301,12 @@ const Page = () => {
 
         <div className="flex gap-2 mt-6 justify-end">
           <Button
-            color={"danger"}
-            disabled={isPending}
-            type="button"
-            variant="flat"
-            onPress={handleReset}
-          >
-            Reset
-          </Button>
-          <Button
-            color="primary"
+            color={"success"}
             disabled={isPending}
             isLoading={isPending}
             type="submit"
           >
-            {isPending ? "Submitting..." : "Submit"}
+            {isPending ? "Placing Order..." : "Place Order"}
           </Button>
         </div>
       </form>

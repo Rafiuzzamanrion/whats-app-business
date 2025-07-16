@@ -114,3 +114,94 @@ export const DELETE = async (request: Request) => {
     );
   }
 };
+
+export const PUT = async (request: Request) => {
+  const session = await getServerSession(authOptions);
+
+  if (
+    !session ||
+    (session.user.role !== Role.ADMIN && session.user.role !== Role.SUPER_ADMIN)
+  ) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const { id, title, description, file, price } = body?.data;
+
+  if (!id || !title || !description || !file || !price) {
+    return NextResponse.json(
+      { error: "Missing required fields" },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const updatedBusinessApi = await prisma.businessApi.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        file,
+        price,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Business API updated successfully",
+        updatedBusinessApi,
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error updating business API:", error);
+
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+};
+
+export const GET_BY_ID = async (request: Request) => {
+  const session = await getServerSession(authOptions);
+
+  if (
+    !session ||
+    (session.user.role !== Role.ADMIN && session.user.role !== Role.SUPER_ADMIN)
+  ) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  console.log("Fetching business API by ID:", id);
+  if (!id) {
+    return NextResponse.json(
+      { error: "Missing required fields" },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const businessApi = await prisma.businessApi.findUnique({
+      where: { id },
+    });
+
+    if (!businessApi) {
+      return NextResponse.json(
+        { error: "Business API not found" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(businessApi);
+  } catch (error) {
+    console.error("Error fetching business API by ID:", error);
+
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+};
