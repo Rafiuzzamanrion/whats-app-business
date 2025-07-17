@@ -17,11 +17,11 @@ export const POST = async (request: Request) => {
   const body = await request.json();
 
   console.log("Received body:", body);
-  const { title, description, file, price } = body?.data;
+  const { title, description, file, price, quantity } = body?.data;
 
   console.log("Parsed fields:", { title, description, file });
 
-  if (!title || !description || !file || !price) {
+  if (!title || !description || !file || !price || !quantity) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 },
@@ -34,6 +34,7 @@ export const POST = async (request: Request) => {
         title,
         description,
         price,
+        quantity,
         file,
       },
     });
@@ -58,17 +59,25 @@ export const POST = async (request: Request) => {
 export const GET = async () => {
   try {
     const businessApis = await prisma.businessApi.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(businessApis);
+    // Convert quantity from Float to Number explicitly
+    const formattedData = businessApis.map((item) => ({
+      ...item,
+      quantity: Number(item.quantity),
+      createdAt: item.createdAt.toISOString(),
+      updatedAt: item.updatedAt.toISOString(),
+    }));
+
+    return NextResponse.json(formattedData);
   } catch (error) {
-    console.error("Error fetching business APIs:", error);
+    console.error("Prisma error:", error);
 
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Database error",
+      },
       { status: 500 },
     );
   }

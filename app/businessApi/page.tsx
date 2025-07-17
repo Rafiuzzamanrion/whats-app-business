@@ -14,6 +14,7 @@ type DataItem = {
   description: string;
   price: string;
   file: string;
+  quantity: number;
   updatedAt: string | Date;
   createdAt: string | Date;
 };
@@ -99,6 +100,9 @@ const Page = () => {
                 <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
                   <h4 className="font-bold text-large my-1">{item.title}</h4>
                   <p className="text-tiny uppercase font-bold">${item.price}</p>
+                  <p className="text-tiny font-bold my-1">
+                    Quantity: {item.quantity}
+                  </p>
                   <small className="text-default-500 my-1">
                     {item.description}
                   </small>

@@ -12,7 +12,9 @@ export async function POST(request: NextRequest) {
       !body.activeWhatsappNumber ||
       !body.paymentMethod ||
       !body.file ||
-      !body.productId // Add this check
+      !body.productId ||
+      !body.quantity ||
+      !body.totalPrice
     ) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -28,6 +30,8 @@ export async function POST(request: NextRequest) {
         paymentMethod: body.paymentMethod,
         file: body.file,
         status: "pending",
+        quantity: body.quantity,
+        totalPrice: body.totalPrice,
         productId: body.productId,
       },
     });

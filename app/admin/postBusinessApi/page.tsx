@@ -21,6 +21,7 @@ type FormData = {
   title: string;
   description: string;
   price?: string;
+  quantity?: number;
   file: FileList | null;
 };
 
@@ -30,6 +31,7 @@ type DataItem = {
   description: string;
   price: string;
   file: string;
+  quantity?: number;
   updatedAt: string | Date;
   createdAt: string | Date;
 };
@@ -47,6 +49,8 @@ const Page = () => {
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
+    price: "",
+    quantity: 1,
     file: null,
   });
   const [isPending, startTransition] = useTransition();
@@ -94,6 +98,7 @@ const Page = () => {
             title: field === "title" ? value : "",
             description: field === "description" ? value : "",
             price: field === "price" ? value : "",
+            quantity: field === "quantity" ? value : 1,
             file: field === "file" ? value : undefined,
           },
         };
@@ -133,6 +138,7 @@ const Page = () => {
             title: formData.title,
             description: formData.description,
             price: formData.price,
+            quantity: formData.quantity || 1,
             file: fileUrl, // This will be the URL
           },
         };
@@ -159,6 +165,7 @@ const Page = () => {
       title: "",
       description: "",
       price: "",
+      quantity: 1,
       file: null,
     });
   };
@@ -210,7 +217,7 @@ const Page = () => {
               }
             >
               {data?.map((item: DataItem) => (
-                <Card key={item?.id} className="pt-1 pb-4 h-[520px]">
+                <Card key={item?.id} className="pt-1 pb-4 h-[550px]">
                   <CardBody className="overflow-visible py-2 flex items-center">
                     <Image
                       alt="Card background"
@@ -226,6 +233,9 @@ const Page = () => {
                     <h4 className="font-bold text-large my-1">{item.title}</h4>
                     <p className="text-tiny uppercase font-bold">
                       ${item.price}
+                    </p>{" "}
+                    <p className="text-tiny font-bold my-1">
+                      Quantity: {item.quantity}
                     </p>
                     <small className="text-default-500 my-1">
                       {item.description}
@@ -306,6 +316,22 @@ const Page = () => {
                       onValueChange={(value) => {
                         updateFormData("price", value);
                         updateAction("price", value);
+                      }}
+                    />
+                    <Input
+                      isRequired
+                      errorMessage="Please enter a valid Quantity"
+                      label="Quantity"
+                      labelPlacement="outside"
+                      name="quantity"
+                      placeholder="Enter a quantity"
+                      type="number"
+                      // value={formData.quantity?.toString() ?? "1"}
+                      onValueChange={(value) => {
+                        const numValue = value ? parseInt(value) : 1; // Ensure we always have a number
+
+                        updateFormData("quantity", numValue);
+                        updateAction("quantity", numValue);
                       }}
                     />
 

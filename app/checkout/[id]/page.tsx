@@ -14,6 +14,7 @@ type FormData = {
   paymentMethod: string;
   file: File | null;
   productId: string;
+  quantity: string;
 };
 type SelectOption = {
   label: string;
@@ -36,6 +37,7 @@ const Page = () => {
     activeWhatsappNumber: "",
     paymentMethod: "",
     file: null as File | null,
+    quantity: "1",
     productId: id as string,
   });
   const [isPending, startTransition] = React.useTransition();
@@ -45,7 +47,8 @@ const Page = () => {
   const [isCopied, setIsCopied] = React.useState(false);
   const { upload, isLoading, error, result, reset } = useCloudinaryUpload();
   const [data, setData] = React.useState<any>(null);
-
+  const [totalAmount, setTotalAmount] = React.useState(0);
+  // const [quanity, setQuanity] = React.useState(10);
   const fetchData = async () => {
     try {
       const response = await axios.get(`/api/businessApi/${id}`);
@@ -81,6 +84,7 @@ const Page = () => {
         !formData.activeWhatsappNumber ||
         !formData.paymentMethod ||
         !formData.file ||
+        !formData.quantity ||
         !formData.productId
       ) {
         console.error("Please fill all required fields");
@@ -104,11 +108,13 @@ const Page = () => {
 
           return;
         }
-        const data = {
+        const updatedData = {
           ...formData,
           file: fileUrl || "",
+          quantity: parseInt(data?.quantity) || 1,
+          totalPrice: parseFloat(formData?.quantity) * parseFloat(data?.price),
         };
-        const response = await axios.post("/api/order", data);
+        const response = await axios.post("/api/order", updatedData);
 
         if (response.status === 201) {
           addToast({
@@ -159,7 +165,24 @@ const Page = () => {
       paymentMethod: selectedKey,
     }));
   };
+  const handleQuantityChange = (selectedQuantity: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      quantity: selectedQuantity,
+    }));
+  };
 
+  const generateQuantityOptions = (maxQuantity: number) => {
+    if (!maxQuantity || maxQuantity <= 0) return [];
+
+    return Array.from({ length: maxQuantity }, (_, index) => ({
+      value: (index + 1).toString(),
+      label: `${index + 1}`,
+    }));
+  };
+  const quantityOptions = generateQuantityOptions(data?.quantity || 1);
+
+  // @ts-ignore
   return (
     <div className={"flex flex-col justify-center items-center "}>
       <h1 className="text-2xl text-center font-bold my-5 uppercase text-success">
@@ -167,7 +190,8 @@ const Page = () => {
       </h1>
 
       <h1 className={"text-2xl font-semibold my-4 "}>
-        Payable Amount: ${data?.price}
+        Payable Amount: $
+        {0 || parseFloat(formData?.quantity) * parseFloat(data?.price)}
       </h1>
 
       <form
@@ -266,6 +290,23 @@ const Page = () => {
             </div>
           </div>
         )}
+        <Select
+          isRequired
+          color={"success"}
+          label="Quantity"
+          name="quantity"
+          selectedKeys={formData.quantity ? [formData.quantity] : []}
+          onSelectionChange={(keys) => {
+            const selectedKey = Array.from(keys)[0] as string;
+
+            // Handle quantity selection
+            handleQuantityChange(selectedKey);
+          }}
+        >
+          {quantityOptions.map((option) => (
+            <SelectItem key={option.value}>{option.label}</SelectItem>
+          ))}
+        </Select>
         <Select
           isRequired
           color={"success"}
