@@ -4,12 +4,15 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Await the params since it's a Promise in newer Next.js versions
+    const { id } = await params;
+
     const business = await prisma.businessApi.findUnique({
       where: {
-        id: params.id,
+        id: id,
       },
     });
 
