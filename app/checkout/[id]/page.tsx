@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { addToast, Button, Input, Select, SelectItem } from "@heroui/react";
 import { LuCopyCheck } from "react-icons/lu";
 import axios from "axios";
+import { router } from "next/client";
 
 import { useCloudinaryUpload } from "@/app/hooks/useCloudinaryUpload";
 
@@ -123,6 +124,7 @@ const Page = () => {
             color: "success",
             timeout: 3000,
           });
+          router.push("/orderStatus");
           reset();
         } else {
           console.error("Failed to create order:", response.statusText);
