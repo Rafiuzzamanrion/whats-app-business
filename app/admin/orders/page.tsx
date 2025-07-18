@@ -6,7 +6,6 @@ import {
   Eye,
   Check,
   X,
-  Download,
   Calendar,
   User,
   Mail,
@@ -35,9 +34,11 @@ import {
   ModalFooter,
   useDisclosure,
   Spinner,
+  Pagination,
 } from "@heroui/react";
 import axios from "axios";
 import { toast } from "sonner";
+import { Image } from "@heroui/image";
 
 // Type definitions
 interface Order {
@@ -84,6 +85,7 @@ const OrderManagement: React.FC = () => {
   });
   const [updatingOrders, setUpdatingOrders] = useState<Set<string>>(new Set());
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentPage, setCurrentPage] = useState(1);
   const [paginationData, setPaginationData] = useState<{
     page: number;
     limit: number;
@@ -100,8 +102,8 @@ const OrderManagement: React.FC = () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
-        page: "1",
-        limit: "10",
+        page: currentPage.toString(),
+        limit: paginationData.limit.toString(),
         ...(filters.status !== "all" && { status: filters.status }),
         ...(filters.paymentMethod !== "all" && {
           paymentMethod: filters.paymentMethod,
@@ -126,17 +128,15 @@ const OrderManagement: React.FC = () => {
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
-      // Handle error (e.g., show a toast notification)
       toast.error("Failed to fetch orders. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  console.log("Orders fetched:", orders);
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [currentPage, filters, searchTerm]);
 
   const updateOrderStatus = async (
     orderId: string,
@@ -172,7 +172,6 @@ const OrderManagement: React.FC = () => {
       }
     } catch (error) {
       console.error("Error updating order:", error);
-      // You might want to show a toast notification here
     } finally {
       setUpdatingOrders((prev) => {
         const newSet = new Set(prev);
@@ -238,8 +237,8 @@ const OrderManagement: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Spinner size="lg" />
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner color={"success"} size="lg" />
       </div>
     );
   }
@@ -248,10 +247,10 @@ const OrderManagement: React.FC = () => {
     <div className="p-6 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-success mb-2">
           Order Management
         </h1>
-        <p className="text-gray-600">Manage and track all customer orders</p>
+        <p className="text-gray-300">Manage and track all customer orders</p>
       </div>
 
       {/* Search and Filter Bar */}
@@ -442,11 +441,23 @@ const OrderManagement: React.FC = () => {
         ))}
       </div>
 
+      {/* Pagination */}
+      <div className="flex justify-center mt-6">
+        <Pagination
+          showControls
+          color="success"
+          page={currentPage}
+          total={paginationData.totalPages}
+          variant="flat"
+          onChange={setCurrentPage}
+        />
+      </div>
+
       {/* Order Detail Modal */}
       <Modal
         isOpen={isOpen}
         scrollBehavior="inside"
-        size="2xl"
+        size="4xl"
         onClose={onClose}
       >
         <ModalContent>
@@ -508,6 +519,10 @@ const OrderManagement: React.FC = () => {
                               {selectedOrder.productId}
                             </div>
                             <div>
+                              <span className="font-medium">Product Name:</span>{" "}
+                              {selectedOrder.name}
+                            </div>
+                            <div>
                               <span className="font-medium">Quantity:</span>{" "}
                               {selectedOrder.quantity}
                             </div>
@@ -553,20 +568,12 @@ const OrderManagement: React.FC = () => {
                           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-2">
                               <FileText className="h-4 w-4 text-gray-600" />
-                              <span className="text-sm">
-                                {selectedOrder.file}
-                              </span>
+                              <Image
+                                height={500}
+                                src={selectedOrder?.file}
+                                width={1000}
+                              />
                             </div>
-                            <Button
-                              download
-                              isIconOnly
-                              as="a"
-                              href={`/uploads/${selectedOrder.file}`}
-                              size="sm"
-                              variant="flat"
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
                           </div>
                         </CardBody>
                       </Card>

@@ -33,7 +33,7 @@ interface User {
   createdAt: string;
 }
 
-export default function AdminPanel() {
+export function AdminPanel() {
   const { user, isSuperAdmin, isAdminOrSuperAdmin } = useRequireAdmin();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -164,10 +164,10 @@ export default function AdminPanel() {
         <NavbarBrand>
           <h1 className="text-xl font-semibold text-primary">Admin Panel</h1>
         </NavbarBrand>
-        <NavbarContent justify="end">
+        <NavbarContent className={"uppercase"} justify="end">
           <NavbarItem>
             <Link
-              className="text-purple-600 hover:text-purple-500 font-medium"
+              className="text-success hover:text-purple-500 font-medium text-small"
               href="/admin"
             >
               Dashboard
@@ -175,7 +175,15 @@ export default function AdminPanel() {
           </NavbarItem>
           <NavbarItem>
             <Link
-              className="text-purple-600 hover:text-purple-500 font-medium"
+              className="text-successhover:text-purple-500 font-medium text-small"
+              href="/admin/orders"
+            >
+              Order Management
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link
+              className="text-success hover:text-purple-500 font-medium text-small"
               href="/admin/postPricingData"
             >
               Add Package
@@ -183,7 +191,7 @@ export default function AdminPanel() {
           </NavbarItem>
           <NavbarItem>
             <Link
-              className="text-purple-600 hover:text-purple-500 font-medium"
+              className="text-success hover:text-purple-500 font-medium text-small"
               href="/admin/postBusinessApi"
             >
               Add Business API

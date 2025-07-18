@@ -49,7 +49,6 @@ const Page = () => {
         className="min-h-screen bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/banner2.jpg')" }}
       >
-        <h1>this is api page</h1>
         <div className="container mx-auto px-6 py-16 md:py-24 text-center">
           <h1 className="text-4xl bg-clip-text text-transparent bg-gradient-to-b leading-loose from-blue-600 to-red-600 md:text-6xl font-bold mb-6">
             WhatsApp Business API <br />

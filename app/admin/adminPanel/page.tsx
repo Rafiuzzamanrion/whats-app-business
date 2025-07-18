@@ -2,7 +2,7 @@
 import React from "react";
 import { Spinner } from "@heroui/spinner";
 
-import AdminPanel from "@/components/AdminPage";
+import { AdminPanel } from "@/components/AdminPage";
 import Unauthorized from "@/components/Unathorized";
 import { useAuth } from "@/app/hooks/use-auth";
 

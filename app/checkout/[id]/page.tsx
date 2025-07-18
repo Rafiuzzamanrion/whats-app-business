@@ -1,7 +1,14 @@
 "use client";
 import React, { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { addToast, Button, Input, Select, SelectItem } from "@heroui/react";
+import {
+  addToast,
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  Tooltip,
+} from "@heroui/react";
 import { LuCopyCheck } from "react-icons/lu";
 import axios from "axios";
 
@@ -196,7 +203,8 @@ const Page = () => {
 
       <form
         className={
-          "space-y-12 w-max dark:bg-gray-900 bg-gray-50 p-10 shadow-xl rounded-2xl"
+          "space-y-12 w-[350px] md:w-[450px] lg:w-[550px] dark:bg-gray-900 bg-gray-50" +
+          " p-5 md:p-8 lg:p-10 shadow-xl rounded-2xl"
         }
         onSubmit={handleSubmit}
       >
@@ -270,8 +278,10 @@ const Page = () => {
             </div>
 
             <div className="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded justify-between">
-              <span className="font-mono">
-                {BINANCE_ADDRESSES[selectedBinanceType]}
+              <span className="font-mono truncate">
+                <Tooltip content={BINANCE_ADDRESSES[selectedBinanceType]}>
+                  {BINANCE_ADDRESSES[selectedBinanceType]}
+                </Tooltip>
               </span>
               <Button
                 size="sm"
