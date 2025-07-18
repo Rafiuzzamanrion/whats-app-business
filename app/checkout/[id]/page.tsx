@@ -1,10 +1,9 @@
 "use client";
 import React, { useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { addToast, Button, Input, Select, SelectItem } from "@heroui/react";
 import { LuCopyCheck } from "react-icons/lu";
 import axios from "axios";
-import { router } from "next/client";
 
 import { useCloudinaryUpload } from "@/app/hooks/useCloudinaryUpload";
 
@@ -48,8 +47,7 @@ const Page = () => {
   const [isCopied, setIsCopied] = React.useState(false);
   const { upload, isLoading, error, result, reset } = useCloudinaryUpload();
   const [data, setData] = React.useState<any>(null);
-  const [totalAmount, setTotalAmount] = React.useState(0);
-  // const [quanity, setQuanity] = React.useState(10);
+  const router = useRouter();
   const fetchData = async () => {
     try {
       const response = await axios.get(`/api/businessApi/${id}`);
