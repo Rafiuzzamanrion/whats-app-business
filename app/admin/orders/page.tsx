@@ -96,51 +96,6 @@ const OrderManagement: React.FC = () => {
     totalPages: 0,
   });
 
-  // Sample data - Replace with your API call
-  const sampleOrders: Order[] = [
-    {
-      id: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      activeWhatsappNumber: "+1234567890",
-      paymentMethod: "Credit Card",
-      file: "order_receipt_001.pdf",
-      productId: "PROD-001",
-      status: "pending",
-      quantity: 2,
-      totalPrice: 299.99,
-      createdAt: "2024-01-15T10:30:00Z",
-      updatedAt: "2024-01-15T10:30:00Z",
-    },
-    {
-      id: "2",
-      name: "Jane Smith",
-      email: "jane@example.com",
-      activeWhatsappNumber: "+9876543210",
-      paymentMethod: "PayPal",
-      file: "order_receipt_002.pdf",
-      productId: "PROD-002",
-      status: "approved",
-      quantity: 1,
-      totalPrice: 149.99,
-      createdAt: "2024-01-14T14:20:00Z",
-      updatedAt: "2024-01-14T16:45:00Z",
-    },
-    {
-      id: "3",
-      name: "Bob Johnson",
-      email: "bob@example.com",
-      activeWhatsappNumber: "+5555555555",
-      paymentMethod: "Bank Transfer",
-      file: "order_receipt_003.pdf",
-      productId: "PROD-003",
-      status: "declined",
-      quantity: 3,
-      totalPrice: 449.97,
-      createdAt: "2024-01-13T09:15:00Z",
-      updatedAt: "2024-01-13T11:30:00Z",
-    },
-  ];
   const fetchOrders = async () => {
     setLoading(true);
     try {
@@ -190,7 +145,6 @@ const OrderManagement: React.FC = () => {
     setUpdatingOrders((prev) => new Set(prev).add(orderId));
 
     try {
-      // Replace with your actual API endpoint
       const response = await fetch(`/api/order/${orderId}`, {
         method: "PATCH",
         headers: {

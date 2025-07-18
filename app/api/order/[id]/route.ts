@@ -21,14 +21,12 @@ interface ApiResponse<T = any> {
 }
 
 interface RouteParams {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body: OrderUpdateRequest = await request.json();
 
     // Check if order exists
@@ -109,7 +107,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Check if order exists
     const existingOrder = await prisma.order.findUnique({
