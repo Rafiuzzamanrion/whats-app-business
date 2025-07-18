@@ -238,7 +238,9 @@ const Page = () => {
                       Quantity: {item.quantity}
                     </p>
                     <small className="text-default-500 my-1">
-                      {item.description}
+                      {item.description.length > 100
+                        ? `${item.description.slice(0, 100)}...`
+                        : item.description}
                     </small>
                   </CardHeader>
 

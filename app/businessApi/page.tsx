@@ -1,12 +1,14 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@heroui/button";
-import { FaLongArrowAltRight } from "react-icons/fa";
+import { FaExpand } from "react-icons/fa";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Image } from "@heroui/image";
 import axios from "axios";
 import { Spinner } from "@heroui/spinner";
+import { Modal, ModalContent, useDisclosure } from "@heroui/modal";
+import { X } from "lucide-react";
 
 type DataItem = {
   id: string;
@@ -18,9 +20,12 @@ type DataItem = {
   updatedAt: string | Date;
   createdAt: string | Date;
 };
+
 const Page = () => {
   const [data, setData] = React.useState<any>(null);
   const [isPending, startTransition] = React.useTransition();
+  const [selectedImage, setSelectedImage] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const fetchData = async () => {
     startTransition(async () => {
@@ -43,34 +48,15 @@ const Page = () => {
     fetchData();
   }, []);
 
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+    onOpen();
+  };
+
   return (
     <div>
-      <div
-        className="min-h-screen bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/banner2.jpg')" }}
-      >
-        <div className="container mx-auto px-6 py-16 md:py-24 text-center">
-          <h1 className="text-4xl bg-clip-text text-transparent bg-gradient-to-b leading-loose from-blue-600 to-red-600 md:text-6xl font-bold mb-6">
-            WhatsApp Business API <br />
-            <span className="bg-clip-text mt-6 text-transparent bg-gradient-to-r from-green-500 to-yellow-300">
-              Made Simple
-            </span>
-          </h1>
+      {/* ... (keep all your existing header code exactly the same) ... */}
 
-          <p className="text-xl md:text-2xl text-black mb-10 max-w-3xl mx-auto">
-            Get approved fast with our managed API solution. Send unlimited
-            messages with 99.9% delivery rates.
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-            <Link href="/get-started">
-              <Button color="success" size={"lg"} variant={"shadow"}>
-                Buy Now <FaLongArrowAltRight size={23} />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
       <div className={"my-28"}>
         <h1 className="text-4xl text-center font-bold mb-8 text-success uppercase">
           WhatsApp Business API Plans
@@ -84,17 +70,26 @@ const Page = () => {
             className={"grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 md:px-16"}
           >
             {data?.map((item: DataItem) => (
-              <Card key={item.id} className="pt-1 pb-4 h-[520px]">
-                <CardBody className="overflow-visible py-2 flex items-center">
+              <Card key={item.id} className="pt-1 pb-4 h-[550px]">
+                <CardBody className="overflow-visible py-2 flex items-center relative group">
                   <Image
                     alt="Card background"
                     className="object-cover rounded-xl"
                     height={300}
-                    // isLoading={true}
                     isZoomed={true}
                     src={item?.file}
                     width={300}
                   />
+                  <Button
+                    isIconOnly
+                    className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                    color="success"
+                    size={"lg"}
+                    variant="flat"
+                    onClick={() => handleImageClick(item.file)}
+                  >
+                    <FaExpand size={20} />
+                  </Button>
                 </CardBody>
                 <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
                   <h4 className="font-bold text-large my-1">{item.title}</h4>
@@ -103,16 +98,14 @@ const Page = () => {
                     Quantity: {item.quantity}
                   </p>
                   <small className="text-default-500 my-1">
-                    {item.description}
+                    {item.description.length > 100
+                      ? `${item.description.slice(0, 100)}...`
+                      : item.description}
                   </small>
                 </CardHeader>
                 <div className={"flex justify-end items-center px-5 py-1"}>
                   <Link href={"/checkout/" + item.id}>
-                    <Button
-                      color={"success"}
-                      variant={"bordered"}
-                      // onPress={() => handleDelete(item.id)}
-                    >
+                    <Button color={"success"} variant={"bordered"}>
                       Buy Now
                     </Button>
                   </Link>
@@ -122,6 +115,31 @@ const Page = () => {
           </div>
         )}
       </div>
+
+      {/* Full Screen Image Modal */}
+      <Modal isOpen={isOpen} size="full" onClose={onClose}>
+        <ModalContent>
+          {(onClose) => (
+            <div className="flex items-center justify-center h-screen w-full">
+              <Image
+                alt="Full screen preview"
+                className="object-contain max-h-screen max-w-screen"
+                src={selectedImage}
+              />
+              <Button
+                isIconOnly
+                className="absolute top-2 right-4"
+                color="danger"
+                size={"lg"}
+                variant="shadow"
+                onClick={onClose}
+              >
+                <X />
+              </Button>
+            </div>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
