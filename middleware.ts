@@ -21,13 +21,7 @@ export async function middleware(req: NextRequest) {
           : "next-auth.session-token",
     });
 
-    console.log("Middleware - Token exists:", !!token);
-    console.log("Middleware - Token ID:", token?.id);
-    console.log("Middleware - Token Role:", token?.role);
-
-    // More robust token validation
     if (!token || !token.id) {
-      console.log("Middleware - No valid token found, redirecting to signin");
       const loginUrl = new URL("/auth/signin", req.nextUrl.origin);
 
       loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
@@ -35,7 +29,6 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    // Optional: Check for specific admin roles
     const userRole = token.role as string;
 
     if (
@@ -43,28 +36,25 @@ export async function middleware(req: NextRequest) {
       userRole !== "ADMIN" &&
       userRole !== "SUPER_ADMIN"
     ) {
-      console.log("Middleware - User doesn't have admin role:", userRole);
-
       return NextResponse.redirect(
         new URL("/unauthorized", req.nextUrl.origin),
       );
     }
 
-    console.log("Middleware - Access granted");
+    if (req.nextUrl.pathname.startsWith("/dashboard") && userRole !== "USER") {
+      return NextResponse.redirect(
+        new URL("/unauthorized", req.nextUrl.origin),
+      );
+    }
 
     return NextResponse.next();
   } catch (error) {
-    console.error("Middleware error:", error);
     const loginUrl = new URL("/auth/signin", req.nextUrl.origin);
 
     return NextResponse.redirect(loginUrl);
   }
 }
 
-// Apply middleware to protected routes
 export const config = {
-  matcher: [
-    "/admin/:path*",
-    // Add other protected routes as needed
-  ],
+  matcher: ["/admin/:path*", "/dashboard/:path*"],
 };

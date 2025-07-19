@@ -1,6 +1,5 @@
 "use client";
 
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { Spinner } from "@heroui/spinner";
 
@@ -37,14 +36,6 @@ export default function Dashboard() {
                 >
                   Admin Panel
                 </Link>
-              )}
-              {isAdminOrSuperAdmin && (
-                <button
-                  className="text-red-600 hover:text-red-500 font-medium"
-                  onClick={() => signOut()}
-                >
-                  Sign Out
-                </button>
               )}
             </div>
           </div>

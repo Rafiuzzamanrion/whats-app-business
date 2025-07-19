@@ -169,7 +169,7 @@ const OrderStatusExample = () => {
   const orderData = {
     id: "ORD-2024-001234",
     status: "pending", // This comes from your data
-    estimatedDelivery: "Dec 25, 2024",
+    estimatedDelivery: "Very soon",
     customerName: "John Doe",
     // ... other order fields
   };
