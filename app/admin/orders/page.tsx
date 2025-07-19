@@ -167,6 +167,7 @@ const OrderManagement: React.FC = () => {
               : order,
           ),
         );
+        toast.success(`Order ${orderId} updated to ${status}`);
       } else {
         throw new Error(result.message || "Failed to update order");
       }

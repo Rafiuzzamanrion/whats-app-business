@@ -117,7 +117,7 @@ const Page = () => {
         const updatedData = {
           ...formData,
           file: fileUrl || "",
-          quantity: parseInt(data?.quantity) || 1,
+          quantity: parseInt(formData?.quantity),
           totalPrice: parseFloat(formData?.quantity) * parseFloat(data?.price),
         };
         const response = await axios.post("/api/order", updatedData);

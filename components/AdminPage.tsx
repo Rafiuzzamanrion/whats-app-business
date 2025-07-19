@@ -19,7 +19,7 @@ import {
 import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
 import { Chip } from "@heroui/chip";
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
+import { Navbar, NavbarContent, NavbarItem } from "@heroui/navbar";
 import { addToast } from "@heroui/react";
 
 import { useRequireAdmin } from "@/app/hooks/use-auth";
@@ -161,10 +161,10 @@ export function AdminPanel() {
   return (
     <div className="min-h-screen">
       <Navbar isBordered className={"w-full"}>
-        <NavbarBrand>
-          <h1 className="text-xl font-semibold text-primary">Admin Panel</h1>
-        </NavbarBrand>
-        <NavbarContent className={"uppercase"} justify="end">
+        <NavbarContent
+          className={"uppercase flex flex-row flex-wrap gap-3 "}
+          justify="end"
+        >
           <NavbarItem>
             <Link
               className="text-success hover:text-purple-500 font-medium text-small"

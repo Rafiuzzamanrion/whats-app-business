@@ -77,7 +77,43 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         return NextResponse.json(response, { status: 400 });
       }
     }
+    if (body.status === "approved") {
+      // if (existingOrder.status === "approved") {
+      //   const response: ApiResponse = {
+      //     success: false,
+      //     message: "Order is already approved",
+      //   };
+      //
+      //   return NextResponse.json(response, { status: 400 });
+      // }
+      try {
+        // Get productId and quantity from existing order if not in body
+        const productId = body.productId || existingOrder.productId;
+        const quantity = body.quantity || existingOrder.quantity;
 
+        if (!productId || !quantity) {
+          throw new Error("Missing productId or quantity for inventory update");
+        }
+
+        await prisma.businessApi.update({
+          where: { id: productId },
+          data: {
+            quantity: {
+              decrement: quantity,
+            },
+            updatedAt: new Date(),
+          },
+        });
+      } catch (e) {
+        console.error("Error updating inventory:", e);
+        const response: ApiResponse = {
+          success: false,
+          message: "Failed to update inventory",
+        };
+
+        return NextResponse.json(response, { status: 500 });
+      }
+    }
     // Update order
     const updatedOrder = await prisma.order.update({
       where: { id },

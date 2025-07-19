@@ -33,3 +33,37 @@ export async function GET(
     );
   }
 }
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const body = await request.json();
+    const { id } = await params;
+
+    // Validate required fields
+    if (!body.quantity) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
+    }
+
+    const updatedBusiness = await prisma.businessApi.update({
+      where: { id: id },
+      data: {
+        quantity: body.quantity,
+      },
+    });
+
+    return NextResponse.json(updatedBusiness);
+  } catch (error) {
+    console.error("Error updating business:", error);
+
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
