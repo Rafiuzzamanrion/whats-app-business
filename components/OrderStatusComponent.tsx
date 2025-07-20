@@ -111,7 +111,6 @@ const OrderStatusComponent: React.FC<OrderStatusProps> = ({
             />
           </div>
 
-          {/* Action Buttons - Only for Pending */}
           {status === "pending" && (
             <button
               className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
