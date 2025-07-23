@@ -70,7 +70,7 @@ const Page = () => {
             className={"grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 md:px-16"}
           >
             {data?.map((item: DataItem) => (
-              <Card key={item.id} className="pt-1 pb-4 h-[550px]">
+              <Card key={item.id} className="pt-1 pb-4 h-auto ">
                 <CardBody className="overflow-visible py-2 flex items-center relative group">
                   <Image
                     alt="Card background"

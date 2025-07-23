@@ -217,7 +217,7 @@ const Page = () => {
               }
             >
               {data?.map((item: DataItem) => (
-                <Card key={item?.id} className="pt-1 pb-4 h-[550px]">
+                <Card key={item?.id} className="pt-1 pb-4 h-auto">
                   <CardBody className="overflow-visible py-2 flex items-center">
                     <Image
                       alt="Card background"
