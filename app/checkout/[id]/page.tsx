@@ -22,6 +22,7 @@ type FormData = {
   file: File | null;
   productId: string;
   quantity: string;
+  productName: string;
 };
 type SelectOption = {
   label: string;
@@ -38,6 +39,7 @@ const BINANCE_ADDRESSES = {
 const Page = () => {
   const params = useParams();
   const { id } = params;
+  const [data, setData] = React.useState<any>(null);
   const [formData, setFormData] = React.useState<FormData>({
     name: "",
     email: "",
@@ -46,6 +48,7 @@ const Page = () => {
     file: null as File | null,
     quantity: "1",
     productId: id as string,
+    productName: data?.title || "",
   });
   const [isPending, startTransition] = React.useTransition();
   const [selectedBinanceType, setSelectedBinanceType] = React.useState<
@@ -53,7 +56,6 @@ const Page = () => {
   >("trc20");
   const [isCopied, setIsCopied] = React.useState(false);
   const { upload, isLoading, error, result, reset } = useCloudinaryUpload();
-  const [data, setData] = React.useState<any>(null);
   const router = useRouter();
   const fetchData = async () => {
     try {
@@ -118,6 +120,7 @@ const Page = () => {
           file: fileUrl || "",
           quantity: parseInt(formData?.quantity),
           totalPrice: parseFloat(formData?.quantity) * parseFloat(data?.price),
+          productName: data?.title || formData.productName,
         };
         const response = await axios.post("/api/order", updatedData);
 

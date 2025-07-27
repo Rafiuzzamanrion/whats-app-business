@@ -115,6 +115,7 @@ model Order {
   paymentMethod        String
   file                 String
   productId            String
+  productName          String
   status               String
   quantity             Int
   totalPrice           Float

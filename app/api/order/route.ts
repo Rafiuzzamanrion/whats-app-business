@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
       !body.paymentMethod ||
       !body.file ||
       !body.productId ||
+      !body.productName ||
       !body.quantity ||
       !body.totalPrice
     ) {
@@ -49,6 +50,7 @@ export async function POST(request: NextRequest) {
         quantity: body.quantity,
         totalPrice: body.totalPrice,
         productId: body.productId,
+        productName: body.productName,
       },
     });
 
