@@ -62,12 +62,12 @@ type ChipColor =
   | "danger";
 
 const statusColorMap: Record<string, ChipColor> = {
-  completed: "success",
+  approved: "success",
   delivered: "success",
   pending: "warning",
   processing: "primary",
   shipped: "primary",
-  cancelled: "danger",
+  declined: "danger",
   refunded: "secondary",
 };
 
@@ -105,7 +105,6 @@ const Page = () => {
         const data = await response.json();
 
         setData(data);
-        console.log("Fetched data:", data);
       });
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -138,12 +137,15 @@ const Page = () => {
     data?.reduce((sum, item) => sum + item.totalPrice, 0) || 0;
   const getCompletedOrders = () =>
     data?.filter(
-      (item) => item.status === "completed" || item.status === "delivered",
+      (item) => item.status === "approved" || item.status === "delivered",
     ).length || 0;
   const getPendingOrders = () =>
     data?.filter(
       (item) => item.status === "pending" || item.status === "processing",
     ).length || 0;
+
+  const getCancelled = () =>
+    data?.filter((item) => item.status === "declined").length || 0;
 
   const getStatusColor = (status: string): ChipColor => {
     return statusColorMap[status.toLowerCase()] || "default";
@@ -154,7 +156,7 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-green-900">
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* User Welcome Header */}
         <div className="mb-8">
@@ -167,10 +169,10 @@ const Page = () => {
                 </div>
               }
               size="lg"
-              src={"/placeholder-avatar.jpg"}
+              src={"user.png"}
             />
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
                 My Dashboard
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-2">
@@ -181,7 +183,7 @@ const Page = () => {
           </div>
 
           {/* User Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
             <Card className="bg-gradient-to-r from-violet-400 to-purple-500 text-white hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
               <CardBody className="p-6">
                 <div className="flex items-center justify-between">
@@ -253,6 +255,23 @@ const Page = () => {
                   </div>
                   <div className="p-3 bg-white/20 rounded-lg">
                     <Clock className="h-8 w-8" />
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+
+            <Card className="bg-gradient-to-r from-red-400 to-rose-500 text-white hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+              <CardBody className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-red-100 text-sm font-medium">
+                      Cancelled
+                    </p>
+                    <p className="text-3xl font-bold">{getCancelled()}</p>
+                    <p className="text-red-200 text-xs mt-1">Declined orders</p>
+                  </div>
+                  <div className="p-3 bg-white/20 rounded-lg">
+                    <X className="h-8 w-8" />
                   </div>
                 </div>
               </CardBody>
