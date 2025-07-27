@@ -108,6 +108,7 @@ model BusinessApi {
 
 model Order {
   id                   String   @id @default(uuid())
+  userId               String
   name                 String
   email                String
   activeWhatsappNumber String

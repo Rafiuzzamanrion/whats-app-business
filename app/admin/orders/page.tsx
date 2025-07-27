@@ -42,6 +42,7 @@ import { Image } from "@heroui/image";
 
 // Type definitions
 interface Order {
+  userId: string;
   id: string;
   name: string;
   email: string;

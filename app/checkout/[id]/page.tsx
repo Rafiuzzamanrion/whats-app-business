@@ -61,7 +61,6 @@ const Page = () => {
 
       if (response.status === 200) {
         setData(response.data);
-        console.log("Fetched data:", response.data);
       } else {
         console.error("Failed to fetch data:", response.statusText);
       }
@@ -140,7 +139,6 @@ const Page = () => {
         return;
       }
     });
-    console.log("Form submitted with data:", formData);
   };
 
   const selectOptions: SelectOption[] = [
@@ -159,10 +157,8 @@ const Page = () => {
 
   switch (formData?.paymentMethod) {
     case "binance":
-      console.log("Binance selected");
       break;
     default:
-      console.log("No option selected");
       break;
   }
 

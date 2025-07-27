@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
 
 import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    console.log("Creating order with body:", body);
     if (
       !body.name ||
       !body.email ||
@@ -21,9 +24,22 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+    const session = await getServerSession(authOptions);
 
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    let userId = session?.user?.id;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 },
+      );
+    }
     const order = await prisma.order.create({
       data: {
+        userId: userId,
         name: body.name,
         email: body.email,
         activeWhatsappNumber: body.activeWhatsappNumber,
