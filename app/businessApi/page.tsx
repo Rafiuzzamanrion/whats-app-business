@@ -9,6 +9,10 @@ import axios from "axios";
 import { Spinner } from "@heroui/spinner";
 import { Modal, ModalContent, useDisclosure } from "@heroui/modal";
 import { X } from "lucide-react";
+import { addToast } from "@heroui/react";
+import { router } from "next/client";
+
+import { useAuth } from "@/app/hooks/use-auth";
 
 type DataItem = {
   id: string;
@@ -51,6 +55,20 @@ const Page = () => {
   const handleImageClick = (imageUrl: string) => {
     setSelectedImage(imageUrl);
     onOpen();
+  };
+  const { user } = useAuth();
+  const handleCheck = () => {
+    if (!user) {
+      addToast({
+        title: "Unauthorized",
+        description: "You must be logged in to place an order.",
+        color: "danger",
+        timeout: 3000,
+      });
+      router.push("/auth/signin");
+
+      return;
+    }
   };
 
   return (
@@ -105,7 +123,11 @@ const Page = () => {
                 </CardHeader>
                 <div className={"flex justify-end items-center px-5 py-1"}>
                   <Link href={"/checkout/" + item.id}>
-                    <Button color={"success"} variant={"bordered"}>
+                    <Button
+                      color={"success"}
+                      variant={"bordered"}
+                      onPress={handleCheck}
+                    >
                       Buy Now
                     </Button>
                   </Link>

@@ -13,6 +13,7 @@ import { LuCopyCheck } from "react-icons/lu";
 import axios from "axios";
 
 import { useCloudinaryUpload } from "@/app/hooks/useCloudinaryUpload";
+import { useAuth } from "@/app/hooks/use-auth";
 
 type FormData = {
   name: string;
@@ -57,6 +58,7 @@ const Page = () => {
   const [isCopied, setIsCopied] = React.useState(false);
   const { upload, isLoading, error, result, reset } = useCloudinaryUpload();
   const router = useRouter();
+  const { user } = useAuth();
   const fetchData = async () => {
     try {
       const response = await axios.get(`/api/businessApi/${id}`);
