@@ -13,6 +13,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  addToast,
 } from "@heroui/react";
 import { Plus, Save, X, Clock, Users, Shield, Check } from "lucide-react";
 import axios from "axios";
@@ -34,7 +35,7 @@ interface Pricing {
 }
 
 interface Package {
-  _id?: string;
+  id?: string;
   name: string;
   subtitle: string;
   icon: IconOption;
@@ -129,6 +130,7 @@ const PackageManager: React.FC = () => {
   useEffect(() => {
     fetchPackages();
   }, []);
+  console.log("Packages:", packages);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -247,17 +249,22 @@ const PackageManager: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const deletePackage = async (index: number) => {
+  const deletePackage = async (id: string) => {
     try {
-      const response = await fetch(`/api/packages/${packages[index]._id}`, {
+      const response = await fetch(`/api/packages/${id}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
-        const updatedPackages = [...packages];
-
-        updatedPackages.splice(index, 1);
-        setPackages(updatedPackages);
+        await fetchPackages();
+        addToast({
+          title: "Package Deleted",
+          description: "The package has been successfully deleted.",
+          color: "success",
+          timeout: 2000,
+        });
+      } else {
+        console.error("Failed to delete package");
       }
     } catch (error) {
       console.error("Error deleting package:", error);
@@ -408,9 +415,10 @@ const PackageManager: React.FC = () => {
               {/* CTA Button - Always at bottom */}
               <div className="mt-6">
                 <button
-                  className={`w-full bg-gradient-to-r ${pkg?.gradient} text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 group-hover:shadow-xl`}
+                  className={`w-full bg-gradient-to-r ${pkg?.gradient} text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 group-hover:shadow-xl`}
+                  onClick={() => deletePackage(pkg.id || "")}
                 >
-                  Get Started
+                  Delete
                 </button>
               </div>
             </div>
