@@ -4,13 +4,9 @@ import { prisma } from "@/lib/prisma";
 
 export const DELETE = async (
   request: NextRequest,
-  {
-    params,
-  }: {
-    params: { id: string };
-  },
+  { params }: { params: Promise<{ id: string }> },
 ) => {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const existingPackage = await prisma.package.findUnique({

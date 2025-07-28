@@ -69,6 +69,8 @@ interface PackageFormElement extends HTMLFormElement {
 const PackageManager: React.FC = () => {
   const [packages, setPackages] = useState<Package[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const toggle = () => setOpen(!open);
   const [currentPackage, setCurrentPackage] = useState<Package>({
     name: "",
     subtitle: "",
