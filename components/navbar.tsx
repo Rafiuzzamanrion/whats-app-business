@@ -57,7 +57,7 @@ export const Navbar = () => {
               </NextLink>
             </NavbarItem>
           ))}
-          {isAdminOrSuperAdmin && (
+          {isAdminOrSuperAdmin ? (
             <NavbarItem>
               <NextLink
                 className={clsx(
@@ -69,6 +69,22 @@ export const Navbar = () => {
                 href="/admin"
               >
                 Admin
+              </NextLink>
+            </NavbarItem>
+          ) : (
+            <NavbarItem>
+              <NextLink
+                className={clsx(
+                  linkStyles({ color: "foreground" }),
+                  `${
+                    isActive("/dashboard") &&
+                    "text-success font-bold" + " transition-colors"
+                  }` + "hover:text-success",
+                )}
+                color="primary"
+                href="/dashboard"
+              >
+                Dashboard
               </NextLink>
             </NavbarItem>
           )}
@@ -145,7 +161,7 @@ export const Navbar = () => {
               </Link>
             </NavbarMenuItem>
           ))}
-          {isAdminOrSuperAdmin && (
+          {isAdminOrSuperAdmin ? (
             <NavbarItem>
               <NextLink
                 className={clsx(
@@ -157,6 +173,22 @@ export const Navbar = () => {
                 href="/admin"
               >
                 Admin
+              </NextLink>
+            </NavbarItem>
+          ) : (
+            <NavbarItem>
+              <NextLink
+                className={clsx(
+                  linkStyles({ color: "foreground" }),
+                  `${
+                    isActive("/dashboard") &&
+                    "text-success font-bold" + " transition-colors"
+                  }` + "hover:text-success",
+                )}
+                color="primary"
+                href="/dashboard"
+              >
+                Dashboard
               </NextLink>
             </NavbarItem>
           )}

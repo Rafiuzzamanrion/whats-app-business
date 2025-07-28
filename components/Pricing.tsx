@@ -1,111 +1,80 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Check,
   Zap,
   Users,
-  BarChart3,
-  MessageSquare,
   Clock,
   Shield,
-  Rocket,
   ShieldCheck,
   CheckCircle,
+  MessageSquare,
+  BarChart3,
+  Rocket,
 } from "lucide-react";
 import { BsWhatsapp } from "react-icons/bs";
 import { FaLongArrowAltRight, FaShoppingCart } from "react-icons/fa";
 import { Button } from "@heroui/button";
 import Link from "next/link";
 
+interface Pricing {
+  setup: string;
+  messaging: string;
+  note: string;
+}
+
+type GradientOption =
+  | "from-green-400 to-emerald-600"
+  | "from-blue-400 to-indigo-600"
+  | "from-red-400 to-rose-600"
+  | "from-purple-400 to-violet-600";
+
+type IconOption = "MessageSquare" | "BarChart3" | "Rocket" | "Zap";
+
+interface Package {
+  _id?: string;
+  name: string;
+  subtitle: string;
+  icon: IconOption;
+  gradient: GradientOption;
+  bgGradient: string;
+  borderColor: string;
+  features: string[];
+  pricing: Pricing;
+  badge: string;
+  popular: boolean;
+  instant: boolean;
+}
+
 const Pricing = () => {
-  const packages = [
-    {
-      name: "Basic Blast",
-      subtitle: "Up to 1,000 Customers",
-      icon: <MessageSquare className="w-8 h-8" />,
-      gradient: "from-green-400 to-emerald-600",
-      bgGradient: "from-green-50 to-emerald-50",
-      borderColor: "border-green-200",
-      features: [
-        "Send messages to 1K customers",
-        "We provide API & messaging panel",
-        "We upload numbers & manage the broadcast",
-        "Delivery report + support",
-      ],
-      pricing: {
-        setup: "$50",
-        messaging: "$10 per 1K messages",
-        note: "Meta Conversation Fee: Separate (based on Meta's official rate)",
-      },
-      badge: "Perfect for small businesses or testing campaigns",
-      popular: false,
-    },
-    {
-      name: "Smart Reach",
-      subtitle: "Up to 5,000 Customers",
-      icon: <BarChart3 className="w-8 h-8" />,
-      gradient: "from-blue-400 to-indigo-600",
-      bgGradient: "from-blue-50 to-indigo-50",
-      borderColor: "border-blue-200",
-      features: [
-        "Daily messaging to 5K contacts",
-        "Full campaign management",
-        "Scheduling + branded panel",
-        "Live reporting & support",
-        "24/7 Support",
-      ],
-      pricing: {
-        setup: "$50",
-        messaging: "$50 for 5K messages",
-        note: "Meta Conversation Fee: Separate (Meta billing directly)",
-      },
-      badge: "Ideal for eCommerce, coaching, local service providers",
-      popular: true,
-    },
-    {
-      name: "Power Campaign",
-      subtitle: "Up to 10,000 Customers",
-      icon: <Rocket className="w-8 h-8" />,
-      gradient: "from-red-400 to-rose-600",
-      bgGradient: "from-red-50 to-rose-50",
-      borderColor: "border-red-200",
-      features: [
-        "High-speed messaging to 10K customers",
-        "Auto-reply & lead capture integration",
-        "Advanced campaign tracking",
-        "24/7 Support",
-      ],
-      pricing: {
-        setup: "$50",
-        messaging: "$100 for 10K messages",
-        note: "Meta Conversation Fee: Separate (charged by Meta)",
-      },
-      badge: "Best for agencies, large brands, or high-volume marketing",
-      popular: false,
-    },
-    {
-      name: "Instant Package",
-      subtitle: "Ready Within 1–2 Hours",
-      icon: <Zap className="w-8 h-8" />,
-      gradient: "from-purple-400 to-violet-600",
-      bgGradient: "from-purple-50 to-violet-50",
-      borderColor: "border-purple-200",
-      features: [
-        "WhatsApp API + Messaging Setup instantly",
-        "No paperwork needed",
-        "Use your brand name or generic name",
-        "You provide message & numbers — we activate everything",
-      ],
-      pricing: {
-        setup: "$75",
-        messaging: "$10 per 1K customers",
-        note: "Meta Fee: Separate (paid by client)",
-      },
-      badge: "Same-day activation | Full test before payment",
-      popular: false,
-      instant: true,
-    },
-  ];
+  const [packages, setPackages] = React.useState([]);
+  const fetchPackages = async () => {
+    try {
+      const response = await fetch("/api/packages");
+
+      if (response.ok) {
+        const data = await response.json();
+
+        setPackages(data);
+      } else {
+        console.error("Failed to fetch packages");
+      }
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  // Create an icon map
+  const iconComponents = {
+    MessageSquare,
+    BarChart3,
+    Rocket,
+    Zap,
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-green-100 py-24 my-32 px-4">
@@ -121,7 +90,7 @@ const Pricing = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
-          {packages.map((pkg, index) => (
+          {packages?.map((pkg: Package, index) => (
             <div
               key={index}
               className={`relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 ${pkg.borderColor} overflow-hidden group flex flex-col`}
@@ -150,7 +119,11 @@ const Pricing = () => {
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-4">
                     <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                      {pkg.icon}
+                      {pkg.icon && iconComponents[pkg.icon] ? (
+                        React.createElement(iconComponents[pkg.icon])
+                      ) : (
+                        <span>No Icon</span>
+                      )}
                     </div>
                     <Users className="w-6 h-6 opacity-80" />
                   </div>
@@ -196,12 +169,12 @@ const Pricing = () => {
                           🔧 API Setup:
                         </span>
                         <span className="font-bold text-gray-900">
-                          {pkg.pricing.setup}
+                          ${pkg.pricing.setup}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="font-bold text-gray-900">
-                          {pkg.pricing.messaging}
+                          ${pkg.pricing.messaging}
                         </span>
                       </div>
                     </div>
