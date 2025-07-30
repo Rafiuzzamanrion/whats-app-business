@@ -17,6 +17,11 @@ import { FaLongArrowAltRight, FaShoppingCart } from "react-icons/fa";
 import { Button } from "@heroui/button";
 import Link from "next/link";
 import { Spinner } from "@heroui/spinner";
+import { useRouter } from "next/navigation";
+import { addToast } from "@heroui/react";
+
+import { useAuth } from "@/app/hooks/use-auth";
+import { useCheckoutNavigation } from "@/app/hooks/useDynamicRoute";
 
 interface Pricing {
   setup: string;
@@ -33,7 +38,7 @@ type GradientOption =
 type IconOption = "MessageSquare" | "BarChart3" | "Rocket" | "Zap";
 
 interface Package {
-  id?: string;
+  id?: string | null;
   name: string;
   subtitle: string;
   icon: IconOption;
@@ -50,6 +55,9 @@ interface Package {
 const Pricing = () => {
   const [packages, setPackages] = React.useState([]);
   const [isPending, startTransition] = React.useTransition();
+  const router = useRouter();
+  const { user } = useAuth();
+  const { navigateToCheckout } = useCheckoutNavigation();
   const fetchPackages = async () => {
     try {
       startTransition(async () => {
@@ -78,6 +86,21 @@ const Pricing = () => {
     BarChart3,
     Rocket,
     Zap,
+  };
+  const handleCheck = (): boolean => {
+    if (!user) {
+      addToast({
+        title: "Unauthorized",
+        description: "You must be logged in to place an order.",
+        color: "danger",
+        timeout: 3000,
+      });
+      router.push("/auth/signin");
+
+      return false;
+    }
+
+    return true;
   };
 
   return (
@@ -210,6 +233,13 @@ const Pricing = () => {
                   <div className="mt-6">
                     <button
                       className={`w-full bg-gradient-to-r ${pkg.gradient} text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 group-hover:shadow-xl`}
+                      onClick={() => {
+                        if (handleCheck()) {
+                          navigateToCheckout(pkg.id || "", {
+                            source: "businessApi",
+                          });
+                        }
+                      }}
                     >
                       Get Started
                     </button>

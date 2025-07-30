@@ -264,11 +264,12 @@ const BusinessApi = () => {
                   <Button
                     color={"success"}
                     variant={"bordered"}
-                    onPress={async () => {
-                      await handleCheck();
-                      navigateToCheckout(item.id, {
-                        source: "businessApi",
-                      });
+                    onPress={() => {
+                      if (handleCheck()) {
+                        navigateToCheckout(item.id, {
+                          source: "businessApi",
+                        });
+                      }
                     }}
                   >
                     Buy Now
