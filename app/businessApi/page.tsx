@@ -49,7 +49,21 @@ const BusinessApi = () => {
 
         if (response.status === 200) {
           setData(response.data);
-          console.log("Fetched data:", response.data);
+        } else {
+          console.error("Failed to fetch data:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    });
+  };
+  const fetchApiData = async () => {
+    startTransition(async () => {
+      try {
+        const response = await axios.get("/api/businessApi");
+
+        if (response.status === 200) {
+          setData(response.data);
         } else {
           console.error("Failed to fetch data:", response.statusText);
         }
@@ -70,7 +84,7 @@ const BusinessApi = () => {
 
   const { user } = useAuth();
 
-  const handleCheck = () => {
+  const handleCheck = (): boolean => {
     if (!user) {
       addToast({
         title: "Unauthorized",
@@ -80,8 +94,10 @@ const BusinessApi = () => {
       });
       router.push("/auth/signin");
 
-      return;
+      return false;
     }
+
+    return true;
   };
 
   const features = [
