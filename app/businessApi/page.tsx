@@ -18,9 +18,10 @@ import {
   Users,
 } from "lucide-react";
 import { addToast } from "@heroui/react";
-import { router } from "next/client";
+import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/app/hooks/use-auth";
+import { useCheckoutNavigation } from "@/app/hooks/useDynamicRoute";
 
 type DataItem = {
   id: string;
@@ -38,6 +39,8 @@ const BusinessApi = () => {
   const [isPending, startTransition] = React.useTransition();
   const [selectedImage, setSelectedImage] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
+  const { navigateToCheckout } = useCheckoutNavigation();
 
   const fetchData = async () => {
     startTransition(async () => {
@@ -257,15 +260,18 @@ const BusinessApi = () => {
                   </small>
                 </CardHeader>
                 <div className={"flex justify-end items-center px-5 py-1"}>
-                  <Link href={"/checkout/" + item.id}>
-                    <Button
-                      color={"success"}
-                      variant={"bordered"}
-                      onPress={handleCheck}
-                    >
-                      Buy Now
-                    </Button>
-                  </Link>
+                  <Button
+                    color={"success"}
+                    variant={"bordered"}
+                    onPress={async () => {
+                      await handleCheck();
+                      navigateToCheckout(item.id, {
+                        source: "businessApi",
+                      });
+                    }}
+                  >
+                    Buy Now
+                  </Button>
                 </div>
               </Card>
             ))}

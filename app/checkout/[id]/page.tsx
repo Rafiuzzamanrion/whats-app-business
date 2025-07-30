@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   addToast,
   Button,
@@ -59,6 +59,10 @@ const Page = () => {
   const { upload, isLoading, error, result, reset } = useCloudinaryUpload();
   const router = useRouter();
   const { user } = useAuth();
+  const searchParams = useSearchParams();
+  const source = searchParams.get("source");
+
+  console.log("Source:", source);
   const fetchData = async () => {
     try {
       const response = await axios.get(`/api/businessApi/${id}`);
