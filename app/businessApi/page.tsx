@@ -57,21 +57,6 @@ const BusinessApi = () => {
       }
     });
   };
-  const fetchApiData = async () => {
-    startTransition(async () => {
-      try {
-        const response = await axios.get("/api/businessApi");
-
-        if (response.status === 200) {
-          setData(response.data);
-        } else {
-          console.error("Failed to fetch data:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    });
-  };
 
   useEffect(() => {
     fetchData();
